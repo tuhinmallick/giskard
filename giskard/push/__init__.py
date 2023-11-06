@@ -379,14 +379,13 @@ class ContributionPush(FeaturePush):
         """
         if self.feature_type == "text":
             clause = [ContainsWord(self.feature, self.value)]
+        elif self.bounds is None:
+            clause = [EqualTo(self.feature, self.value)]
         else:
-            if self.bounds is not None:
-                clause = [
-                    GreaterThan(self.feature, self.bounds[0], True),
-                    LowerThan(self.feature, self.bounds[1], True),
-                ]
-            else:
-                clause = [EqualTo(self.feature, self.value)]
+            clause = [
+                GreaterThan(self.feature, self.bounds[0], True),
+                LowerThan(self.feature, self.bounds[1], True),
+            ]
         slicing_func = QueryBasedSliceFunction(Query(clause))
         self.slicing_function = slicing_func
         self.test_params = {"slicing_function": slicing_func}
@@ -395,13 +394,12 @@ class ContributionPush(FeaturePush):
         """
         Select statistical test based on prediction type.
         """
-        if not self.correct_prediction:
-            if self.model_type == SupportedModelTypes.REGRESSION:
-                self.tests = [test_diff_rmse_push]
-            elif self.model_type == SupportedModelTypes.CLASSIFICATION:
-                self.tests = [test_diff_f1_push]
-        elif self.correct_prediction:
+        if self.correct_prediction:
             self.tests = [test_theil_u]
+        elif self.model_type == SupportedModelTypes.REGRESSION:
+            self.tests = [test_diff_rmse_push]
+        elif self.model_type == SupportedModelTypes.CLASSIFICATION:
+            self.tests = [test_diff_f1_push]
 
 
 class PerturbationPush(FeaturePush):

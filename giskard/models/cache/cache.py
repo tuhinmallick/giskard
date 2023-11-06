@@ -84,7 +84,4 @@ class ModelCache:
         index = [key for key, values in self.prediction_cache.items()]
         data = np.array([list(flatten([values])) for key, values in self.prediction_cache.items()])
 
-        if len(data) > 0:
-            return pd.DataFrame(data, index=index)
-        else:
-            return pd.DataFrame({})
+        return pd.DataFrame(data, index=index) if len(data) > 0 else pd.DataFrame({})

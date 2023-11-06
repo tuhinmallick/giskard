@@ -167,25 +167,25 @@ def test_after_cancel_should_shutdown_nicely():
 @pytest.mark.concurrency
 def test_many_tasks_should_shutdown_nicely(many_worker_pool : WorkerPoolExecutor):
     sleep(3)
-    futures = []
-    for _ in range(100):
-        futures.append(many_worker_pool.schedule(sleep_add_one, [2, 2], timeout=20))
+    futures = [
+        many_worker_pool.schedule(sleep_add_one, [2, 2], timeout=20)
+        for _ in range(100)
+    ]
     sleep(10)
     exit_codes = many_worker_pool.shutdown(wait=True, timeout=60)
     assert len([code is not None for code in exit_codes]) == 4
-    assert all([code is not None for code in exit_codes])
+    assert all(code is not None for code in exit_codes)
     assert exit_codes == [0,0,0,0]
-    assert all([f.done() for f in futures])
-    assert all([not t.is_alive() for t in many_worker_pool._threads])
+    assert all(f.done() for f in futures)
+    assert all(not t.is_alive() for t in many_worker_pool._threads)
 
 @pytest.mark.concurrency
 def test_submit_many_task(many_worker_pool: WorkerPoolExecutor):
-    futures = []
-    for i in range(100):
-        futures.append(many_worker_pool.schedule(sleep_add_one, [0.1, i], timeout=20))
-    for i in range(100, 200):
-        futures.append(many_worker_pool.submit(add_one, i))
-
+    futures = [
+        many_worker_pool.schedule(sleep_add_one, [0.1, i], timeout=20)
+        for i in range(100)
+    ]
+    futures.extend(many_worker_pool.submit(add_one, i) for i in range(100, 200))
     for expected, future in enumerate(futures):
         assert expected + 1 == future.result()
 

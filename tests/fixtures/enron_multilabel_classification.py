@@ -56,12 +56,10 @@ input_types = {
 def get_labels(filename):
     with open(filename + ".cats") as f:
         labels = defaultdict(dict)
-        line = f.readline()
-        while line:
+        while line := f.readline():
             line = line.split(",")
             top_cat, sub_cat, freq = int(line[0]), int(line[1]), int(line[2])
             labels[top_cat][sub_cat] = freq
-            line = f.readline()
     return dict(labels)
 
 
@@ -104,11 +102,12 @@ def enron_data_full() -> Dataset:
             values_to_add["Month"] = date_time_obj.strftime("%B")
             values_to_add["Hour"] = int(date_time_obj.strftime("%H"))
 
-            # Count number of forwarded mails
-            number_of_messages = 0
-            for line in message.get_payload().split("\n"):
-                if ("forwarded" in line.lower() or "original" in line.lower()) and "--" in line:
-                    number_of_messages += 1
+            number_of_messages = sum(
+                1
+                for line in message.get_payload().split("\n")
+                if ("forwarded" in line.lower() or "original" in line.lower())
+                and "--" in line
+            )
             values_to_add["Nb_of_forwarded_msg"] = number_of_messages
 
         data_list.append(values_to_add)

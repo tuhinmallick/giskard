@@ -192,7 +192,7 @@ def _test_metamorphic(
 
     messages = [TestMessage(type=TestMessageLevel.INFO, text=f"{modified_rows_count} rows were perturbed")]
 
-    passed = bool(passed_ratio > threshold)
+    passed = passed_ratio > threshold
     # --- debug ---
     output_ds = None
     if not passed and debug:
@@ -438,7 +438,7 @@ def _test_metamorphic_t_test(
 
 
 def _create_test_result(critical_quantile, dataset, debug, direction, messages, model, p_value, result_df):
-    passed = bool(p_value < critical_quantile)
+    passed = p_value < critical_quantile
     # --- debug ---
     output_ds = None
     if not passed and debug:

@@ -67,8 +67,7 @@ def ml_worker_id(is_server, url):
     key = f"{sys.executable}"
     if not is_server:
         key += str(url)
-    hash_value = hashlib.sha1(key.encode()).hexdigest()
-    return hash_value
+    return hashlib.sha1(key.encode()).hexdigest()
 
 
 def validate_url(_ctx, _param, value) -> AnyHttpUrl:

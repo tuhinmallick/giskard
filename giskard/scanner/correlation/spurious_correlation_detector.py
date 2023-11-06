@@ -106,7 +106,7 @@ class SpuriousCorrelationDetector(Detector):
     def _get_measure_fn(self):
         if self.method == "theil":
             return _theil_u, "Theil's U"
-        if self.method == "mutual_information" or self.method == "mi":
+        if self.method in ["mutual_information", "mi"]:
             return _mutual_information, "Mutual information"
         if self.method == "cramer":
             return _cramer_v, "Cramer's V"

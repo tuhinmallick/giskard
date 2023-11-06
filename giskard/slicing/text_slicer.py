@@ -71,10 +71,7 @@ class TextSlicer(BaseSlicer):
         for col in filter(lambda x: column_types[x] == "category", column_types.keys()):
             slices.extend(slicer.find_slices([col]))
 
-        # Convert slices from metadata to original dataset
-        slices = [MetadataSliceFunction(s.query, feature, "text") for s in slices]
-
-        return slices
+        return [MetadataSliceFunction(s.query, feature, "text") for s in slices]
 
     def find_token_based_slices(self, feature, target):
         target_is_numeric = pd.api.types.is_numeric_dtype(self.dataset.df[target])
@@ -166,7 +163,9 @@ def _make_vectorizer(data: pd.Series, tfidf=False, **kwargs):
     vectorizer = TfidfVectorizer(**kwargs) if tfidf else CountVectorizer(**kwargs)
     tokenizer = vectorizer.build_tokenizer()
 
-    tokenized_stopwords = sum([tokenizer(stop_word) for stop_word in raw_stopwords], [])
+    tokenized_stopwords = sum(
+        (tokenizer(stop_word) for stop_word in raw_stopwords), []
+    )
     vectorizer.set_params(stop_words=tokenized_stopwords)
 
     try:

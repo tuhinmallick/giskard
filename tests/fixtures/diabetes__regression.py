@@ -54,8 +54,7 @@ def diabetes_dataset() -> Dataset:
     raw_data = datasets.load_diabetes(as_frame=True)["data"]
     column_types = {feature: "numeric" for feature in diabetes["feature_names"]}
 
-    wrapped_data = Dataset(raw_data, column_types=column_types)
-    return wrapped_data
+    return Dataset(raw_data, column_types=column_types)
 
 
 @pytest.fixture()
@@ -66,5 +65,4 @@ def diabetes_dataset_with_target() -> Dataset:
     raw_data["target"] = loaded["target"]
     column_types = {feature: "numeric" for feature in list(raw_data.columns)}
 
-    wrapped_data = Dataset(raw_data, target="target", column_types=column_types)
-    return wrapped_data
+    return Dataset(raw_data, target="target", column_types=column_types)

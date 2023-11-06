@@ -42,23 +42,17 @@ def _detect_charset(text: str):
 def _avg_word_length(text: str):
     # @TODO: improve this
     words = text.split()
-    if len(words) == 0:
-        return 0.0
-    return np.mean([len(w) for w in words])
+    return 0.0 if not words else np.mean([len(w) for w in words])
 
 
 def _avg_whitespace(text: str):
     chars = list(text)
-    if len(chars) == 0:
-        return 0.0
-    return np.mean([c.isspace() for c in chars])
+    return 0.0 if not chars else np.mean([c.isspace() for c in chars])
 
 
 def _avg_digits(text: str):
     chars = list(text)
-    if len(chars) == 0:
-        return 0.0
-    return np.mean([c.isdigit() for c in chars])
+    return 0.0 if not chars else np.mean([c.isdigit() for c in chars])
 
 
 def _detect_lang(text: str):

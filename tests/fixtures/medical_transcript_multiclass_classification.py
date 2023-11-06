@@ -59,10 +59,12 @@ def load_data() -> pd.DataFrame:
 @pytest.fixture()
 def medical_transcript_data() -> Dataset:
     raw_data = load_data()
-    wrapped_data = Dataset(
-        raw_data, name="medical_transcript_dataset", target=TARGET_COLUMN_NAME, column_types={TEXT_COLUMN_NAME: "text"}
+    return Dataset(
+        raw_data,
+        name="medical_transcript_dataset",
+        target=TARGET_COLUMN_NAME,
+        column_types={TEXT_COLUMN_NAME: "text"},
     )
-    return wrapped_data
 
 
 def preprocess_text(df: pd.DataFrame) -> pd.DataFrame:
@@ -100,13 +102,10 @@ def medical_transcript_model(medical_transcript_data: Dataset) -> SKLearnModel:
     # Fit pipeline.
     pipeline.fit(medical_transcript_data.df[[TEXT_COLUMN_NAME]], medical_transcript_data.df[TARGET_COLUMN_NAME])
 
-    # Wrap model with giskard
-    wrapped_model = SKLearnModel(
+    return SKLearnModel(
         pipeline,
         model_type="classification",
         name="medical_transcript_classification",
         feature_names=[TEXT_COLUMN_NAME],
         classification_labels=pipeline.classes_,
     )
-
-    return wrapped_model

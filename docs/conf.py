@@ -110,11 +110,7 @@ html_theme_options = {
 add_function_parentheses = False
 # Do not execute the notebooks when building the docs
 docs_version = os.getenv("READTHEDOCS_VERSION", "latest")
-if docs_version == "latest":
-    branch = "main"
-else:
-    branch = docs_version.replace("-", "/")
-
+branch = "main" if docs_version == "latest" else docs_version.replace("-", "/")
 nbsphinx_execute = "never"
 # fmt: off
 nbsphinx_prolog = """
@@ -166,10 +162,6 @@ def linkcode_resolve(domain, info):
     except:  # noqa: E722
         lineno = None
 
-    if lineno:
-        linespec = "#L%d-L%d" % (lineno, lineno + len(source) - 1)
-    else:
-        linespec = ""
-
+    linespec = "#L%d-L%d" % (lineno, lineno + len(source) - 1) if lineno else ""
     filename = fn.split("main", 1)[-1]
     return f"https://github.com/Giskard-AI/giskard/blob/main/{filename}{linespec}"

@@ -36,13 +36,12 @@ def hotel_text_data() -> Dataset:
     fetch_from_ftp(DATA_URL, DATA_PATH)
 
     raw_data = load_data(nrows=105)[[FEATURE_COLUMN_NAME, TARGET_COLUMN_NAME]]
-    wrapped_data = Dataset(
+    return Dataset(
         raw_data,
         name="hotel_text_regression_dataset",
         target=TARGET_COLUMN_NAME,
         column_types={FEATURE_COLUMN_NAME: "text"},
     )
-    return wrapped_data
 
 
 def adapt_vectorizer_input(df: pd.DataFrame) -> Iterable:
@@ -71,8 +70,9 @@ def hotel_text_model(hotel_text_data) -> SKLearnModel:
 
     pipeline.fit(x, y)
 
-    wrapped_model = SKLearnModel(
-        pipeline, model_type="regression", name="hotel_text_regression", feature_names=[FEATURE_COLUMN_NAME]
+    return SKLearnModel(
+        pipeline,
+        model_type="regression",
+        name="hotel_text_regression",
+        feature_names=[FEATURE_COLUMN_NAME],
     )
-
-    return wrapped_model

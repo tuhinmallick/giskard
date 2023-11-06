@@ -132,10 +132,7 @@ class WrapperModel(BaseModel, ABC):
 
         raw_prediction = np.concatenate(outputs)
 
-        if self.is_regression:
-            return raw_prediction.astype(float)
-
-        return raw_prediction
+        return raw_prediction.astype(float) if self.is_regression else raw_prediction
 
     def _possibly_fix_predictions_shape(self, raw_predictions: np.ndarray):
         if not self.is_classification:
@@ -155,10 +152,10 @@ class WrapperModel(BaseModel, ABC):
 
             raw_predictions = raw_predictions.squeeze(tuple(range(1, raw_predictions.ndim - 1)))
 
-            if raw_predictions.ndim > 2:
-                raise ValueError(
-                    f"The output of your model has shape {raw_predictions.shape}, but we expect it to be (n_entries, n_classes)."
-                )
+        if raw_predictions.ndim > 2:
+            raise ValueError(
+                f"The output of your model has shape {raw_predictions.shape}, but we expect it to be (n_entries, n_classes)."
+            )
 
         # E.g. for binary classification, prediction should be of the form `(p, 1 - p)`.
         # If a binary classifier returns a single prediction `p`, we try to infer the second class
@@ -294,14 +291,13 @@ class WrapperModel(BaseModel, ABC):
     @classmethod
     def load_wrapper_meta(cls, local_dir):
         wrapper_meta_file = Path(local_dir) / "giskard-model-wrapper-meta.yaml"
-        if wrapper_meta_file.exists():
-            with open(wrapper_meta_file) as f:
-                wrapper_meta = yaml.load(f, Loader=yaml.Loader)
-                wrapper_meta["batch_size"] = int(wrapper_meta["batch_size"]) if wrapper_meta["batch_size"] else None
-                return wrapper_meta
-        else:
+        if not wrapper_meta_file.exists():
             # ensuring backward compatibility
             return {"batch_size": None}
+        with open(wrapper_meta_file) as f:
+            wrapper_meta = yaml.load(f, Loader=yaml.Loader)
+            wrapper_meta["batch_size"] = int(wrapper_meta["batch_size"]) if wrapper_meta["batch_size"] else None
+            return wrapper_meta
 
     def to_mlflow(self, artifact_path: str = "prediction-function-from-giskard", **kwargs):
         def _giskard_predict(df):

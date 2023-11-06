@@ -101,15 +101,14 @@ class DataProcessor:
 
         if get_mask:
             return dataset.df.index.isin(df.index)  # returns a boolean numpy.ndarray of shape len(dataset.df)
-        else:
-            if len(self.pipeline):
-                ds.data_processor = self
+        if len(self.pipeline):
+            ds.data_processor = self
 
-            # If dataset had metadata, copy it to the new dataset
-            if is_slicing_only and hasattr(dataset, "column_meta"):
-                ds.load_metadata_from_instance(dataset.column_meta)
+        # If dataset had metadata, copy it to the new dataset
+        if is_slicing_only and hasattr(dataset, "column_meta"):
+            ds.load_metadata_from_instance(dataset.column_meta)
 
-            return ds
+        return ds
 
     def __repr__(self) -> str:
         return f"<DataProcessor ({len(self.pipeline)} steps)>"
@@ -177,10 +176,7 @@ class Dataset(ColumnMetadataMixin):
             if neither of cat_columns or column_types are provided. We infer heuristically the types of the columns.
             See the _infer_column_types method.
         """
-        if id is None:
-            self.id = uuid.uuid4()
-        else:
-            self.id = id
+        self.id = uuid.uuid4() if id is None else id
         self.name = name
         self.df = pd.DataFrame(df)
         self.target = target
@@ -410,7 +406,11 @@ class Dataset(ColumnMetadataMixin):
         """
         if not column_types:
             column_types = {}
-        df_columns = set([col for col in self.columns if col != self.target]) if self.target else set(self.columns)
+        df_columns = (
+            {col for col in self.columns if col != self.target}
+            if self.target
+            else set(self.columns)
+        )
 
         # priority of cat_columns over column_types (for categorical columns)
         if cat_columns:

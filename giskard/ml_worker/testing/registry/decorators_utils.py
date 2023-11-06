@@ -64,7 +64,7 @@ def insert_arg(fn: Callable, pos: int, param: inspect.Parameter):
     from inspect import signature
 
     sig = signature(fn)
-    parameters = [par for par in sig.parameters.values()]
+    parameters = list(sig.parameters.values())
     parameters.insert(pos, param)
 
     sig = sig.replace(parameters=parameters)

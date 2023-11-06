@@ -74,7 +74,7 @@ def test_test_function(request, dataset, push_type):
             assert isinstance(push, Push)
             assert isinstance(push, push_type_class)
             push_list.append(len(push.tests))
-            assert all([isinstance(test(), GiskardTest) for test in push.tests])
+            assert all(isinstance(test(), GiskardTest) for test in push.tests)
             if hasattr(push, "slicing_function"):
                 assert isinstance(push.slicing_function, QueryBasedSliceFunction)
         else:

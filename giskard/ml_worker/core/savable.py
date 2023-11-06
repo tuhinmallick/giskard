@@ -162,10 +162,7 @@ class RegistryArtifact(Artifact[SMT], ABC):
     def _load_meta_locally(cls, local_dir, uuid: str) -> Optional[SMT]:
         meta = tests_registry.get_test(uuid)
 
-        if meta is not None:
-            return meta
-
-        return super()._load_meta_locally(local_dir, uuid)
+        return super()._load_meta_locally(local_dir, uuid) if meta is None else meta
 
     @classmethod
     def load(cls, local_dir: Path, uuid: str, meta: SMT):

@@ -24,7 +24,10 @@ def test_extract_debug_info():
     ]
     debug_info = extract_debug_info(request_arguments)
     assert debug_info["project_key"] == TEST_PROJECT_KEY
-    assert debug_info["suffix"] == " | <model:" + TEST_MODEL_ID + "> | <dataset:" + TEST_DATASET_ID + ">"
+    assert (
+        debug_info["suffix"]
+        == f" | <model:{TEST_MODEL_ID}> | <dataset:{TEST_DATASET_ID}>"
+    )
 
 
 TEST_FUNC_ARGUMENT_FLOAT = 114.514
@@ -53,7 +56,10 @@ def test_function_argument_to_ws():
     assert args[1].int_arg == TEST_FUNC_ARGUMENT_INT
     assert args[2].str_arg == TEST_FUNC_ARGUMENT_STR
     assert args[3].bool_arg == TEST_FUNC_ARGUMENT_BOOL  # Processed as an integer, filed in GSK-1557
-    assert args[4].kwargs == str("kwargs['list'] = [1, 2, 3]\nkwargs['dict'] = {'key': 'value'}")
+    assert (
+        args[4].kwargs
+        == "kwargs['list'] = [1, 2, 3]\nkwargs['dict'] = {'key': 'value'}"
+    )
 
 
 def test_parse_function_arguments():

@@ -23,7 +23,7 @@ def test_service(data, model, request):
         arguments: dict[str, Any] = {"model": model, "dataset": data, "threshold": 0.9, "debug": True}
         debug_info = {
             "project_key": project_key,
-            "suffix": "Debug: test_f1 | <model:" + saved_id_model + "> | <dataset:" + saved_id_data + ">",
+            "suffix": f"Debug: test_f1 | <model:{saved_id_model}> | <dataset:{saved_id_data}>",
         }
 
         result = listener.do_run_adhoc_test(client, arguments, test_f1, debug_info)
@@ -33,7 +33,7 @@ def test_service(data, model, request):
         arguments: dict[str, Any] = {"model": model, "dataset": data, "threshold": 0.1, "debug": True}
         debug_info = {
             "project_key": project_key,
-            "suffix": "Debug: test_f1 | <model:" + saved_id_model + "> | <dataset:" + saved_id_data + ">",
+            "suffix": f"Debug: test_f1 | <model:{saved_id_model}> | <dataset:{saved_id_data}>",
         }
 
         with pytest.raises(

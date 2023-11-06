@@ -260,8 +260,14 @@ def build_test_input_dto(client, p, pname, ptype, project_key, uploaded_uuids):
         ]
         kwargs_param = (
             []
-            if len(kwargs_params) == 0
-            else (TestInputDTO(name="kwargs", value="\n".join(kwargs_params), type="Kwargs"))
+            if not kwargs_params
+            else (
+                TestInputDTO(
+                    name="kwargs",
+                    value="\n".join(kwargs_params),
+                    type="Kwargs",
+                )
+            )
         )
 
         return TestInputDTO(
@@ -343,7 +349,7 @@ class Suite:
         default_params : dict, optional
             Any arguments passed will be applied to the tests in the suite, if runtime params with the same name are not set.
         """
-        self.tests = list()
+        self.tests = []
         self.name = name
         self.default_params = default_params if default_params else dict()
 
@@ -367,7 +373,7 @@ class Suite:
         run_args = self.default_params.copy()
         run_args.update(suite_run_args)
 
-        results: List[(str, TestResult, Dict[str, Any])] = list()
+        results: List[(str, TestResult, Dict[str, Any])] = []
         required_params = self.find_required_params()
         undefined_params = {k: v for k, v in required_params.items() if k not in run_args}
         if len(undefined_params):
@@ -444,7 +450,7 @@ class Suite:
 
         # Upload the default parameters if they are model or dataset
         for arg in self.default_params.values():
-            if isinstance(arg, BaseModel) or isinstance(arg, Dataset):
+            if isinstance(arg, (BaseModel, Dataset)):
                 arg.upload(client, project_key)
                 uploaded_uuids.append(str(arg.id))
 
@@ -454,7 +460,7 @@ class Suite:
         return self
 
     def to_dto(self, client: GiskardClient, project_key: str, uploaded_uuids: Optional[List[str]] = None):
-        suite_tests: List[SuiteTestDTO] = list()
+        suite_tests: List[SuiteTestDTO] = []
 
         # Avoid to upload the same artifacts several times
         if uploaded_uuids is None:
@@ -476,12 +482,11 @@ class Suite:
                 }
             )
 
-            kwargs_params = [
+            if kwargs_params := [
                 f"kwargs[{repr(pname)}] = {repr(value)}"
                 for pname, value in t.provided_inputs.items()
                 if pname not in t.giskard_test.meta.args
-            ]
-            if len(kwargs_params) > 0:
+            ]:
                 params["kwargs"] = TestInputDTO(name="kwargs", value="\n".join(kwargs_params), type="Kwargs")
 
             suite_tests.append(
@@ -492,7 +497,12 @@ class Suite:
                 )
             )
 
-        return TestSuiteDTO(name=self.name, project_key=project_key, tests=suite_tests, function_inputs=list())
+        return TestSuiteDTO(
+            name=self.name,
+            project_key=project_key,
+            tests=suite_tests,
+            function_inputs=[],
+        )
 
     def add_test(
         self, test_fn: Test, test_id: Optional[Union[int, str]] = None, display_name: Optional[str] = None, **params
@@ -608,22 +618,23 @@ class Suite:
         input_dict: Dict[str, SuiteInput] = {i.name: i for i in inputs}
 
         if any(
-            [
-                arg
-                for arg in required_args
-                if arg.name not in input_dict or arg.type != input_dict[arg.name].type.__name__
-            ]
+            arg
+            for arg in required_args
+            if arg.name not in input_dict
+            or arg.type != input_dict[arg.name].type.__name__
         ):
             # Test is not added if an input  without default value is not specified
             # or if an input does not match the required type
             return
 
-        suite_args = {}
-
-        for arg in [arg for arg in test_func.args.values() if arg.default is not None and arg.name not in input_dict]:
-            # Set default value if not provided
-            suite_args[arg.name] = arg.default
-
+        suite_args = {
+            arg.name: arg.default
+            for arg in [
+                arg
+                for arg in test_func.args.values()
+                if arg.default is not None and arg.name not in input_dict
+            ]
+        }
         models = [
             modelInput
             for modelInput in input_dict.values()
@@ -633,11 +644,11 @@ class Suite:
             return
 
         if contains_tag(test_func, "ground_truth") and any(
-            [
-                dataset
-                for dataset in input_dict.values()
-                if isinstance(dataset, DatasetInput) and dataset.target is None and dataset.target != ""
-            ]
+            dataset
+            for dataset in input_dict.values()
+            if isinstance(dataset, DatasetInput)
+            and dataset.target is None
+            and dataset.target != ""
         ):
             return
 
@@ -662,7 +673,7 @@ class Suite:
 
 
 def contains_tag(func: TestFunctionMeta, tag: str):
-    return any([t for t in func.tags if t.upper() == tag.upper()])
+    return any(t for t in func.tags if t.upper() == tag.upper())
 
 
 def format_test_result(result: Union[bool, TestResult]) -> str:

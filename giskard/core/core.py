@@ -42,11 +42,11 @@ def create_test_function_id(func):
         is_relative = Path(inspect.getfile(func)).relative_to(plugins_root)
     except ValueError:
         is_relative = False
-    if is_relative:
-        full_name = _get_plugin_method_full_name(func)
-    else:
-        full_name = f"{func.__module__}.{func.__name__}"
-    return full_name
+    return (
+        _get_plugin_method_full_name(func)
+        if is_relative
+        else f"{func.__module__}.{func.__name__}"
+    )
 
 
 class SupportedModelTypes(Enum):
@@ -314,7 +314,7 @@ class TestFunctionMeta(CallableMeta):
 
     def init_from_json(self, json: Dict[str, Any]):
         super().init_from_json(json)
-        self.debug_description = json["debug_description"] if "debug_description" in json.keys() else None
+        self.debug_description = json.get("debug_description", None)
 
 
 class DatasetProcessFunctionType(Enum):
@@ -342,7 +342,7 @@ class DatasetProcessFunctionMeta(CallableMeta):
         super(DatasetProcessFunctionMeta, self).__init__(callable_obj, name, tags, version, type)
         self.cell_level = cell_level
         self.process_type = process_type
-        self.clauses = clauses or list()
+        self.clauses = clauses or []
 
         if cell_level:
             if inspect.isclass(callable_obj):
@@ -387,9 +387,17 @@ def unknown_annotations_to_kwargs(parameters: List[FunctionArgument]) -> List[Fu
     allowed_types = [str, bool, int, float, BaseModel, Dataset, SlicingFunction, TransformationFunction]
     allowed_types = list(map(lambda x: x.__qualname__, allowed_types))
 
-    kwargs = [param for param in parameters if not any([param.type == allowed_type for allowed_type in allowed_types])]
+    kwargs = [
+        param
+        for param in parameters
+        if all(param.type != allowed_type for allowed_type in allowed_types)
+    ]
 
-    parameters = [param for param in parameters if any([param.type == allowed_type for allowed_type in allowed_types])]
+    parameters = [
+        param
+        for param in parameters
+        if any(param.type == allowed_type for allowed_type in allowed_types)
+    ]
 
     for idx, parameter in enumerate(parameters):
         parameter.argOrder = idx
@@ -415,7 +423,13 @@ def unknown_annotations_to_kwargs(parameters: List[FunctionArgument]) -> List[Fu
 
 def extract_optional(field):
     if typing.get_origin(field) is Union and NoneType in typing.get_args(field):
-        return Union[tuple([arg for arg in typing.get_args(field) if arg is not None and arg is not NoneType])]
+        return Union[
+            tuple(
+                arg
+                for arg in typing.get_args(field)
+                if arg is not None and arg is not NoneType
+            )
+        ]
     else:
         return field
 

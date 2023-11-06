@@ -60,7 +60,7 @@ class MultiscaleSlicer(DecisionTreeSlicer):
                     )
                     break
 
-        if len(selection_nodes) == 0:
+        if not selection_nodes:
             return []
 
         # Keep slices that are consistent across 5 levels

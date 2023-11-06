@@ -53,18 +53,16 @@ def get_version(version=None):
         current_settings = _get_settings() or {}
         current_settings["version"] = version
         _write_settings(current_settings)
+    elif app_settings := _get_settings():
+        version = app_settings["version"]
     else:
-        app_settings = _get_settings()
-        if app_settings:
-            version = app_settings["version"]
-        else:
-            version = giskard.get_version()
-            _write_settings({"version": version})
-            latest_version = _fetch_latest_tag()
-            message = f"Giskard Hub not installed. Using version {version}."
-            if latest_version and version != latest_version:
-                message += f" Latest available version is {latest_version}. To use it pass a --version argument"
-            logger.info(message)
+        version = giskard.get_version()
+        _write_settings({"version": version})
+        latest_version = _fetch_latest_tag()
+        message = f"Giskard Hub not installed. Using version {version}."
+        if latest_version and version != latest_version:
+            message += f" Latest available version is {latest_version}. To use it pass a --version argument"
+        logger.info(message)
     return version
 
 
@@ -96,7 +94,7 @@ def _is_backend_ready(endpoint) -> bool:
     try:
         response = requests.get(endpoint)
         response.raise_for_status()
-        return "UP" == response.json()["status"]
+        return response.json()["status"] == "UP"
     except KeyboardInterrupt:
         raise click.Abort()
     except BaseException:  # noqa NOSONAR
@@ -158,9 +156,7 @@ We recommend you to upgrade giskard by running `giskard hub stop && giskard hub 
         )
     container.start()
 
-    up = wait_backend_ready(port)
-
-    if up:
+    if up := wait_backend_ready(port):
         logger.info(f"Giskard Hub {version} started. You can access it at http://localhost:{port}")
     else:
         logger.warning(
@@ -238,12 +234,10 @@ def _get_home_volume():
 
 
 def _expose(token):
-    container = get_container()
-    if container:
-        if container.status != "running":
-            print("Error: Giskard hub is not running. Please start it using `giskard hub start`")
-            raise click.Abort()
-    else:
+    if not (container := get_container()):
+        raise click.Abort()
+    if container.status != "running":
+        print("Error: Giskard hub is not running. Please start it using `giskard hub start`")
         raise click.Abort()
     print("Exposing Giskard Hub to the internet...")
     from pyngrok import ngrok
@@ -362,22 +356,21 @@ def restart(service, hard):
     if container.status != "running":
         logger.info("Giskard hub isn't running")
         _start()
+    elif hard:
+        logger.info(f"Restarting {container.name} container")
+        container.start()
+        container.stop()
+        if get_container():
+            logger.info(f"Container {container.name} restarted")
     else:
-        if hard:
-            logger.info(f"Restarting {container.name} container")
-            container.start()
-            container.stop()
-            if get_container():
-                logger.info(f"Container {container.name} restarted")
+        if service:
+            logger.info(f"Restarting service {service} in {container.name} container")
+            command = f"supervisorctl -c /opt/giskard/supervisord.conf restart {service}"
         else:
-            if service:
-                logger.info(f"Restarting service {service} in {container.name} container")
-                command = f"supervisorctl -c /opt/giskard/supervisord.conf restart {service}"
-            else:
-                logger.info(f"Restarting all services in {container.name} container")
-                command = "supervisorctl -c /opt/giskard/supervisord.conf restart all"
-            for res in container.exec_run(command, stream=True).output:
-                print(res.decode())
+            logger.info(f"Restarting all services in {container.name} container")
+            command = "supervisorctl -c /opt/giskard/supervisord.conf restart all"
+        for res in container.exec_run(command, stream=True).output:
+            print(res.decode())
 
 
 @hub.command("logs")
@@ -505,13 +498,12 @@ def status():
     Check if server container is running and status of each internal service
     """
     analytics.track("giskard-server:status")
-    app_settings = _get_settings()
-    if not app_settings:
-        logger.info("Giskard Hub is not installed. Install using `giskard hub start`")
-        return
-    else:
+    if app_settings := _get_settings():
         version = app_settings["version"]
 
+    else:
+        logger.info("Giskard Hub is not installed. Install using `giskard hub start`")
+        return
     logger.info(f"Giskard Hub version is set to {version}")
 
     latest = _fetch_latest_tag()
@@ -519,8 +511,7 @@ def status():
     if read_version(version) < read_version(latest):
         logger.info(f"A new version is available: {latest}")
 
-    container = get_container()
-    if container:
+    if container := get_container():
         if container.status == "running":
             logger.info(f"Container {container.name} status:")
             print(get_container().exec_run("supervisorctl -c /opt/giskard/supervisord.conf").output.decode())

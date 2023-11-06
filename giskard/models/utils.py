@@ -11,10 +11,7 @@ def map_to_tuples(data: Iterator):
     item = next(data)
     data = itertools.chain([item], data)
 
-    if isinstance(item, tuple):  # nothing to do
-        return data
-
-    return map(lambda x: (x,), data)
+    return data if isinstance(item, tuple) else map(lambda x: (x,), data)
 
 
 def np_types_to_native(some_list: List):

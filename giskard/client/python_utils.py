@@ -7,8 +7,9 @@ from platform import python_version
 
 
 def get_python_requirements() -> str:
-    pip_requirements = os.popen(f"{sys.executable} -m pip list --format freeze").read()
-    if pip_requirements:
+    if pip_requirements := os.popen(
+        f"{sys.executable} -m pip list --format freeze"
+    ).read():
         return pip_requirements
     else:
         raise RuntimeError(

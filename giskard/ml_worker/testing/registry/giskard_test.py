@@ -65,10 +65,7 @@ class GiskardTest(Artifact[TestFunctionMeta], ABC):
     def _load_meta_locally(cls, local_dir, uuid: str) -> Optional[TestFunctionMeta]:
         meta = tests_registry.get_test(uuid)
 
-        if meta is not None:
-            return meta
-
-        return super()._load_meta_locally(local_dir, uuid)
+        return super()._load_meta_locally(local_dir, uuid) if meta is None else meta
 
     @classmethod
     def load(cls, local_dir: Path, uuid: str, meta: TestFunctionMeta):
@@ -134,7 +131,11 @@ class GiskardTestMethod(GiskardTest):
 
         parameters: List[Parameter] = list(signature(self.test_fn).parameters.values())
 
-        return set([param.default for param in parameters if isinstance(param.default, Artifact)])
+        return {
+            param.default
+            for param in parameters
+            if isinstance(param.default, Artifact)
+        }
 
     def execute(self) -> Result:
         analytics.track("test:execute", {"test_name": self.meta.full_name})

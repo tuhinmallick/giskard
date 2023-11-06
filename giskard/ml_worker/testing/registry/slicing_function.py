@@ -89,7 +89,11 @@ class SlicingFunction(RegistryArtifact[DatasetProcessFunctionMeta]):
 
         parameters: List[Parameter] = list(signature(self.func).parameters.values())
 
-        return set([param.default for param in parameters if isinstance(param.default, Artifact)])
+        return {
+            param.default
+            for param in parameters
+            if isinstance(param.default, Artifact)
+        }
 
     def execute(self, data: Union[pd.Series, pd.DataFrame]):
         """
@@ -160,10 +164,7 @@ def slicing_function(_fn=None, row_level=True, name=None, tags: Optional[List[st
 
         return _wrap_slicing_function(func, row_level, cell_level)
 
-    if callable(_fn):
-        return functools.wraps(_fn)(inner(_fn))
-    else:
-        return inner
+    return functools.wraps(_fn)(inner(_fn)) if callable(_fn) else inner
 
 
 def _wrap_slicing_function(original: Callable, row_level: bool, cell_level: bool):

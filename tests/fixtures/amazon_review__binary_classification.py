@@ -30,8 +30,7 @@ DATA_PATH = Path.home() / ".giskard" / "amazon_review_dataset" / "reviews.json"
 
 def download_data(**kwargs) -> pd.DataFrame:
     fetch_from_ftp(DATA_URL, DATA_PATH)
-    _df = pd.read_json(DATA_PATH, lines=True, **kwargs)
-    return _df
+    return pd.read_json(DATA_PATH, lines=True, **kwargs)
 
 
 def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -59,10 +58,12 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
 @pytest.fixture()
 def amazon_review_data() -> Dataset:
     raw_data = preprocess_data(download_data(nrows=5000))
-    wrapped_data = Dataset(
-        raw_data, name="reviews", target=TARGET_COLUMN_NAME, column_types={FEATURE_COLUMN_NAME: "text"}
+    return Dataset(
+        raw_data,
+        name="reviews",
+        target=TARGET_COLUMN_NAME,
+        column_types={FEATURE_COLUMN_NAME: "text"},
     )
-    return wrapped_data
 
 
 def make_lowercase(x):
@@ -83,7 +84,7 @@ stemmer = SnowballStemmer("english")
 def tokenizer(x):
     """Define string tokenization logic."""
     x = x.split()
-    stems = list()
+    stems = []
     [stems.append(stemmer.stem(word)) for word in x]
     return stems
 
@@ -110,8 +111,7 @@ def amazon_review_model(amazon_review_data: Dataset) -> SKLearnModel:
 
     pipeline.fit(x, y)
 
-    # Wrap pipeline.
-    wrapped_model = SKLearnModel(
+    return SKLearnModel(
         model=pipeline,
         model_type="classification",
         feature_names=[FEATURE_COLUMN_NAME],
@@ -119,5 +119,3 @@ def amazon_review_model(amazon_review_data: Dataset) -> SKLearnModel:
         classification_threshold=0.5,
         classification_labels=[0, 1],
     )
-
-    return wrapped_model

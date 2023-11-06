@@ -32,11 +32,11 @@ MAX_NUM_ROWS = 500
 
 def create_label(x: int) -> int:
     """Map rating to the label."""
-    if x in [1, 2]:
+    if x in {1, 2}:
         return 0
     if x == 3:
         return 1
-    if x in [4, 5]:
+    if x in {4, 5}:
         return 2
 
 
@@ -87,13 +87,12 @@ def remove_emoji(data: str) -> str:
     return re.sub(emoji, "", data)
 
 
-regex = re.compile("[%s]" % re.escape(string.punctuation))
+regex = re.compile(f"[{re.escape(string.punctuation)}]")
 
 
 def remove_punctuation(text: str) -> str:
     """Remove punctuation from the text."""
-    text = regex.sub(" ", text)
-    return text
+    return regex.sub(" ", text)
 
 
 def text_preprocessor(df: pd.DataFrame) -> pd.DataFrame:
@@ -172,7 +171,7 @@ def infer_predictions(_model: torch.nn.Module, _dataloader: DataLoader) -> np.nd
     """Perform inference using given model on given dataloader."""
     _model.eval()
 
-    y_pred = list()
+    y_pred = []
     for batch in _dataloader:
         batch = tuple(b.to(Config.device) for b in batch)
         inputs = {"input_ids": batch[0], "attention_mask": batch[1]}
@@ -183,8 +182,7 @@ def infer_predictions(_model: torch.nn.Module, _dataloader: DataLoader) -> np.nd
         probs = torch.nn.functional.softmax(outputs.logits).detach().cpu().numpy()
         y_pred.append(probs)
 
-    y_pred = np.concatenate(y_pred, axis=0)
-    return y_pred
+    return np.concatenate(y_pred, axis=0)
 
 
 class CustomWrapper(Model):
@@ -197,8 +195,7 @@ class CustomWrapper(Model):
 
         cleaned_df = text_preprocessor(df)
         data_loader = create_dataloader(cleaned_df)
-        predicted_probabilities = infer_predictions(self.model, data_loader)
-        return predicted_probabilities
+        return infer_predictions(self.model, data_loader)
 
 
 @pytest.fixture()

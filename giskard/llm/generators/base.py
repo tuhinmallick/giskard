@@ -114,10 +114,9 @@ class BaseDataGenerator(LLMGenerator):
         except (AttributeError, KeyError) as err:
             raise LLMGenerationError("Could not parse generated inputs") from err
 
-        dataset = Dataset(
+        return Dataset(
             df=pd.DataFrame(generated),
             name=self._make_dataset_name(model, num_samples),
             validation=False,
             column_types=column_types,
         )
-        return dataset

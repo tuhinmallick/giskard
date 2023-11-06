@@ -43,7 +43,7 @@ def test_websocket_actor_run_ad_hoc_test_no_debug(debug):
 
             reply = listener.run_ad_hoc_test(client=client, params=params)
             assert isinstance(reply, websocket.RunAdHocTest)
-            assert reply.results and 1 == len(reply.results)
+            assert reply.results and len(reply.results) == 1
             assert my_simple_test.meta.uuid == reply.results[0].testUuid
             assert not reply.results[0].result.passed
             assert not reply.results[0].result.is_error
@@ -70,7 +70,7 @@ def my_simple_test_debug_incorrect_impl(dataset: Dataset, debug: bool = False):
     # The debug param should not be ignored,
     # otherwise raising ValueError due to missing debug_info when not debugging
     output_ds = dataset.copy()
-    output_ds.name = debug_prefix + "my_simple_test_debug_incorrect_impl"
+    output_ds.name = f"{debug_prefix}my_simple_test_debug_incorrect_impl"
     return GiskardTestResult(passed=False, output_df=output_ds)
 
 
@@ -107,7 +107,7 @@ def my_simple_test_debug(dataset: Dataset, debug: bool = False):
     output_ds = None
     if debug:
         output_ds = dataset.copy()
-        output_ds.name = debug_prefix + "my_simple_test_debug"
+        output_ds.name = f"{debug_prefix}my_simple_test_debug"
     return GiskardTestResult(passed=False, output_df=output_ds)
 
 
@@ -138,7 +138,7 @@ def test_websocket_actor_run_ad_hoc_test_debug(enron_data: Dataset):
 
             reply = listener.run_ad_hoc_test(client=client, params=params)
             assert isinstance(reply, websocket.RunAdHocTest)
-            assert reply.results and 1 == len(reply.results)
+            assert reply.results and len(reply.results) == 1
             assert my_simple_test_debug.meta.uuid == reply.results[0].testUuid
             assert not reply.results[0].result.passed
             assert not reply.results[0].result.is_error
@@ -182,7 +182,7 @@ def test_websocket_actor_run_ad_hoc_test_debug_no_name(enron_data: Dataset):
 
             # Dataset nullable name fixed in https://github.com/Giskard-AI/giskard/pull/1541
             reply = listener.run_ad_hoc_test(client=client, params=params)
-            assert reply.results and 1 == len(reply.results)
+            assert reply.results and len(reply.results) == 1
             assert my_simple_test_debug_no_name.meta.uuid == reply.results[0].testUuid
             assert not reply.results[0].result.passed
             assert not reply.results[0].result.is_error

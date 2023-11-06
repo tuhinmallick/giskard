@@ -62,7 +62,11 @@ class TransformationFunction(RegistryArtifact[DatasetProcessFunctionMeta]):
 
         parameters: List[Parameter] = list(signature(self.func).parameters.values())
 
-        return set([param.default for param in parameters if isinstance(param.default, Artifact)])
+        return {
+            param.default
+            for param in parameters
+            if isinstance(param.default, Artifact)
+        }
 
     def execute(self, data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -131,10 +135,7 @@ def transformation_function(
             return func
         return _wrap_transformation_function(func, row_level, cell_level)()
 
-    if callable(_fn):
-        return functools.wraps(_fn)(inner(_fn))
-    else:
-        return inner
+    return functools.wraps(_fn)(inner(_fn)) if callable(_fn) else inner
 
 
 def _wrap_transformation_function(original: Callable, row_level: bool, cell_level: bool):

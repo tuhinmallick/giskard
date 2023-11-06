@@ -4,8 +4,7 @@ from sklearn.linear_model import LinearRegression
 
 
 def get_df():
-    df = pd.DataFrame({"x": np.arange(100), "y": np.arange(100)})
-    return df
+    return pd.DataFrame({"x": np.arange(100), "y": np.arange(100)})
 
 
 def get_model_and_df():

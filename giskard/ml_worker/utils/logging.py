@@ -59,7 +59,7 @@ class Timer:
 
     def create_message(self, duration):
         if self.message_template:
-            return self.message_template.strip() + f" executed in {duration}"
+            return f"{self.message_template.strip()} executed in {duration}"
         else:
             return f"Executed in {duration}"
 

@@ -105,7 +105,9 @@ class LLMCharsInjectionDetector(Detector):
 
             # Model is vulnerable to specific injection, create an issue
             examples = dataset_sample.df.loc[:, (res.feature,)].copy()
-            examples[res.feature] = examples[res.feature] + f"{encoded_char} … {encoded_char}"
+            examples[
+                res.feature
+            ] = f"{examples[res.feature]}{encoded_char} … {encoded_char}"
             examples["Model output"] = res.predictions
             examples = examples.loc[res.vulnerable_mask]
 

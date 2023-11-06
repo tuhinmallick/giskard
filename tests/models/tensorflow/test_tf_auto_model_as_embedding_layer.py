@@ -62,9 +62,7 @@ def get_model(max_length, transformer_model, num_labels, rate=0.5, name_model=""
 
     output = tf.keras.layers.Dense(num_labels, activation="sigmoid")(transf_out)
 
-    model = tf.keras.Model(inputs=[input_ids_in, input_masks_in], outputs=output)
-
-    return model
+    return tf.keras.Model(inputs=[input_ids_in, input_masks_in], outputs=output)
 
 
 def get_inputs(tokenizer, sentences, max_length):

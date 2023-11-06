@@ -65,7 +65,7 @@ class ScanReportWidget(BaseWidget):
         self.scan_result = scan_result
 
     def render_template(self, template_filename: str, **kwargs) -> str:
-        tpl = get_template("scan_report/" + template_filename)
+        tpl = get_template(f"scan_report/{template_filename}")
 
         issues_by_group = defaultdict(list)
         for issue in self.scan_result.issues:

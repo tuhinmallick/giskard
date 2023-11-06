@@ -124,9 +124,7 @@ class Issue:
         )
 
     def examples(self, n=3) -> pd.DataFrame:
-        if self._examples is not None:
-            return self._examples.head(n)
-        return pd.DataFrame()
+        return self._examples.head(n) if self._examples is not None else pd.DataFrame()
 
     def add_examples(self, examples: pd.DataFrame):
         if self._examples is None:

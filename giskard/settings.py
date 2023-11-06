@@ -9,10 +9,7 @@ from pydantic import BaseModel
 # See https://linear.app/giskard/issue/GSK-1745/upgrade-pydantic-to-20
 IS_PYDANTIC_V2 = version.parse(pydantic.version.VERSION) >= version.parse("2.0")
 
-if IS_PYDANTIC_V2:
-    FIELD_ATTR = "model_fields"
-else:
-    FIELD_ATTR = "__fields__"
+FIELD_ATTR = "model_fields" if IS_PYDANTIC_V2 else "__fields__"
 
 
 def expand_env_var(env_var: Optional[str]) -> Optional[str]:

@@ -69,11 +69,11 @@ def extract_debug_info(request_arguments):
     for arg in request_arguments:
         if arg.model:
             filled_info = template_info.replace("xxx", arg.name)
-            info["suffix"] += filled_info.replace(arg.name + "_id", arg.model.id)
+            info["suffix"] += filled_info.replace(f"{arg.name}_id", arg.model.id)
             info["project_key"] = arg.model.project_key  # in case model is in the args and dataset is not
         elif arg.dataset:
             filled_info = template_info.replace("xxx", arg.name)
-            info["suffix"] += filled_info.replace(arg.name + "_id", arg.dataset.id)
+            info["suffix"] += filled_info.replace(f"{arg.name}_id", arg.dataset.id)
             info["project_key"] = arg.dataset.project_key  # in case dataset is in the args and model is not
     return info
 
@@ -275,11 +275,10 @@ def map_suite_input_ws(i: websocket.SuiteInput):
 
 
 def function_argument_to_ws(value: Dict[str, Any]):
-    args = list()
+    args = []
     kwargs = dict()
 
-    for v in value:
-        obj = value[v]
+    for v, obj in value.items():
         if isinstance(obj, Dataset):
             funcargs = websocket.FuncArgument(
                 name=v, dataset=websocket.ArtifactRef(project_key="test", id=str(obj.id)), none=False
@@ -315,7 +314,7 @@ def function_argument_to_ws(value: Dict[str, Any]):
             continue
         args.append(funcargs)
 
-    if len(kwargs) > 0:
+    if kwargs:
         args.append(
             websocket.FuncArgument(
                 name="kwargs",

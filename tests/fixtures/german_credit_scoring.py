@@ -58,7 +58,9 @@ def german_credit_catboost_raw_model(german_credit_data):
     timer = Timer()
     column_types = {i: input_types[i] for i in input_types if i != "default"}
 
-    columns_to_encode = [key for key in column_types.keys() if column_types[key] == "category"]
+    columns_to_encode = [
+        key for key in column_types if column_types[key] == "category"
+    ]
 
     credit = german_credit_data.df
 

@@ -15,11 +15,7 @@ from giskard.models.base import BaseModel
 from . import debug_description_prefix, debug_prefix
 
 
-@test(
-    name="Right Label",
-    tags=["heuristic", "classification"],
-    debug_description=debug_description_prefix + "that <b>do not return the right classification label</b>.",
-)
+@test(name="Right Label", tags=["heuristic", "classification"], debug_description=f"{debug_description_prefix}that <b>do not return the right classification label</b>.")
 @validate_classification_label
 def test_right_label(
     model: BaseModel,
@@ -71,7 +67,7 @@ def test_right_label(
     passed_idx = dataset.df.loc[prediction_results == classification_label].index.values
 
     passed_ratio = len(passed_idx) / len(dataset)
-    passed = bool(passed_ratio > threshold)
+    passed = passed_ratio > threshold
 
     # --- debug ---
     output_ds = None
@@ -85,11 +81,7 @@ def test_right_label(
     return TestResult(actual_slices_size=[len(dataset)], metric=passed_ratio, passed=passed, output_df=output_ds)
 
 
-@test(
-    name="Output in range",
-    tags=["heuristic", "classification", "regression"],
-    debug_description=debug_description_prefix + "that are <b>out of the given range</b>.",
-)
+@test(name="Output in range", tags=["heuristic", "classification", "regression"], debug_description=f"{debug_description_prefix}that are <b>out of the given range</b>.")
 @validate_classification_label
 def test_output_in_range(
     model: BaseModel,
@@ -164,7 +156,7 @@ def test_output_in_range(
     passed_idx = dataset.df.loc[(output <= max_range) & (output >= min_range)].index.values
 
     passed_ratio = len(passed_idx) / len(dataset)
-    passed = bool(passed_ratio >= threshold)
+    passed = passed_ratio >= threshold
 
     # --- debug ---
     output_ds = None
@@ -325,11 +317,7 @@ def _theil_u(x, y):
     return mutual_info_score(x, y) / stats.entropy(pd.Series(y).value_counts(normalize=True))
 
 
-@test(
-    name="Nominal Association",
-    tags=["statistic", "nominal association", "classification"],
-    debug_description=debug_description_prefix + "of <b>the data slice that was given as an input of the test</b>.",
-)
+@test(name="Nominal Association", tags=["statistic", "nominal association", "classification"], debug_description=f"{debug_description_prefix}of <b>the data slice that was given as an input of the test</b>.")
 def test_nominal_association(
     model: BaseModel,
     dataset: Dataset,
@@ -403,11 +391,7 @@ def test_nominal_association(
     return TestResult(metric=metric, passed=passed, messages=messages, output_df=output_ds)
 
 
-@test(
-    name="Cramer's V",
-    tags=["statistic", "nominal association", "classification"],
-    debug_description=debug_description_prefix + "of <b>the data slice that was given as an input of the test</b>.",
-)
+@test(name="Cramer's V", tags=["statistic", "nominal association", "classification"], debug_description=f"{debug_description_prefix}of <b>the data slice that was given as an input of the test</b>.")
 def test_cramer_v(
     model: BaseModel, dataset: Dataset, slicing_function: SlicingFunction, threshold: float = 0.5, debug: bool = False
 ) -> TestResult:
@@ -447,11 +431,7 @@ def test_cramer_v(
     return test_nominal_association(model, dataset, slicing_function, "cramer_v", threshold, debug).execute()
 
 
-@test(
-    name="Mutual Information",
-    tags=["statistic", "nominal association", "classification"],
-    debug_description=debug_description_prefix + "of <b>the data slice that was given as an input of the test</b>.",
-)
+@test(name="Mutual Information", tags=["statistic", "nominal association", "classification"], debug_description=f"{debug_description_prefix}of <b>the data slice that was given as an input of the test</b>.")
 def test_mutual_information(
     model: BaseModel, dataset: Dataset, slicing_function: SlicingFunction, threshold: float = 0.5, debug: bool = False
 ) -> TestResult:
@@ -490,11 +470,7 @@ def test_mutual_information(
     return test_nominal_association(model, dataset, slicing_function, "mutual_information", threshold, debug).execute()
 
 
-@test(
-    name="Theil's U",
-    tags=["statistic", "nominal association", "classification"],
-    debug_description=debug_description_prefix + "of <b>the data slice that was given as an input of the test</b>.",
-)
+@test(name="Theil's U", tags=["statistic", "nominal association", "classification"], debug_description=f"{debug_description_prefix}of <b>the data slice that was given as an input of the test</b>.")
 def test_theil_u(
     model: BaseModel, dataset: Dataset, slicing_function: SlicingFunction, threshold: float = 0.5, debug: bool = False
 ) -> TestResult:

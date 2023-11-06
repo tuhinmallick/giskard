@@ -15,9 +15,4 @@ def dataset_path(project_key: str, file_name: str) -> Path:
 
 
 def get_size(path: str):
-    size = 0
-
-    for file_ in Path(path).rglob("*"):
-        size += file_.stat().st_size
-
-    return size
+    return sum(file_.stat().st_size for file_ in Path(path).rglob("*"))

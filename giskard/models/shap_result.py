@@ -60,7 +60,7 @@ class ShapResult:
                 "classification models."
             )
 
-    def to_wandb(self, run: Optional["wandb.wandb_sdk.wandb_run.Run"] = None) -> None:  # noqa
+    def to_wandb(self, run: Optional["wandb.wandb_sdk.wandb_run.Run"] = None) -> None:    # noqa
         """Create and log the SHAP charts to the WandB run.
 
         For the active WandB run, logs SHAP charts, which include:
@@ -89,7 +89,7 @@ class ShapResult:
 
             # Create general SHAP feature importance plot.
             general_bar_plot = _wandb_general_bar_plot(self.explanations, list(self.feature_types.keys()))
-            charts.update({f"{PanelNames.GENERAL}/general_shap_bar_plot": general_bar_plot})
+            charts[f"{PanelNames.GENERAL}/general_shap_bar_plot"] = general_bar_plot
 
             counter = {"category": 0, "numeric": 0, "text": 0}
             for t in self.feature_types.values():
@@ -109,10 +109,12 @@ class ShapResult:
             for feature_name, feature_type in self.feature_types.items():
                 if feature_type == "category":
                     bar_plot = _wandb_bar_plot(self.explanations, feature_name)
-                    charts.update({f"{PanelNames.CATEGORICAL}/{feature_name}_shap_bar_plot": bar_plot})
+                    charts[f"{PanelNames.CATEGORICAL}/{feature_name}_shap_bar_plot"] = bar_plot
                 elif feature_type == "numeric":
                     scatter_plot = _wandb_scatter_plot(self.explanations, feature_name)
-                    charts.update({f"{PanelNames.NUMERICAL}/{feature_name}_shap_scatter_plot": scatter_plot})
+                    charts[
+                        f"{PanelNames.NUMERICAL}/{feature_name}_shap_scatter_plot"
+                    ] = scatter_plot
                 else:
                     warning_msg = (
                         f"We do not support the wandb logging of ShapResult for text features yet. The "

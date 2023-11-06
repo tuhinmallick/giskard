@@ -86,7 +86,7 @@ class LLMPromptInjectionDetector(Detector):
             prompts_names = [prompt.name for prompt in results[group]["input_prompt"]]
             prompts_contents = [prompt.content for prompt in results[group]["input_prompt"]]
             if all(prompts_names):
-                failed_examples.update({"Prompt Name": prompts_names})
+                failed_examples["Prompt Name"] = prompts_names
                 cols = ["Prompt Name"]
 
             failed_examples.update({"Input Prompt": prompts_contents, "Prediction": results[group]["prediction"]})
@@ -174,7 +174,10 @@ def _generate_prompt_injection_tests(issue: Issue):
             )
         kwargs[k] = v[0] if v else None
 
-    if any([issue.dataset.column_types[feature] != "text" for feature in issue.features]):
+    if any(
+        issue.dataset.column_types[feature] != "text"
+        for feature in issue.features
+    ):
         raise ValueError("We currently only support LLMs with purely text features")
     prompt_dataset.df = pd.DataFrame(prompts_content * len(issue.features), columns=issue.features)
 

@@ -103,18 +103,17 @@ class TextTypoTransformation(TextTransformation):
             # get a random position
             i = self.rng.integers(0, len(x))
 
-            if cat == 0:  # insertion
+            if cat == 0:
                 t = self._random_key_typo(x[i])
                 x = x[:i] + t + x[i:]
-            elif cat == 1:  # deletion
+            elif cat == 1:
                 if x[i].isspace():  # don’t delete spaces
                     i = min(i + 1, len(x) - 1)
                 x = x[:i] + x[i + 1 :]
-            elif cat == 2:  # replacement
+            elif cat == 2:
                 x = x[:i] + self._random_key_typo(x[i]) + x[i + 1 :]
-            else:  # transposition
-                if i < len(x) - 1:
-                    x = x[:i] + x[i + 1] + x[i] + x[i + 2 :]
+            elif i < len(x) - 1:
+                x = x[:i] + x[i + 1] + x[i] + x[i + 2 :]
         return x
 
     def _random_key_typo(self, char):

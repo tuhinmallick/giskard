@@ -113,10 +113,8 @@ def _compile_prompts(prompt_dicts, current_product):
 
 
 def _join_main_prompt(preset):
-    prompt_nshot = preset["prompt_nshot"]
-
-    if prompt_nshot:
-        shots_joined = "\n\n".join(preset["prompt_shots"][0:prompt_nshot])
+    if prompt_nshot := preset["prompt_nshot"]:
+        shots_joined = "\n\n".join(preset["prompt_shots"][:prompt_nshot])
         prompt_joined = "\n".join(
             x
             for x in (
@@ -138,19 +136,16 @@ def _join_main_prompt(preset):
             if preset[x]
         )
 
-    prompt_formatted = prompt_joined.format(
+    return prompt_joined.format(
         REPLACE_term_human=preset["prompt_terms_human"],
         REPLACE_term_ai=preset["prompt_terms_ai"],
         REPLACE_private_value=preset["prompt_private_value"],
         user_input="{user_input}",
     )
 
-    return prompt_formatted
-
 
 def _join_prompt_attack(preset):
-    attack_instruction = preset["attack_instruction"]
-    if attack_instruction:
+    if attack_instruction := preset["attack_instruction"]:
         attack_instruction_formatted = attack_instruction.format(
             REPLACE_rogue_string=preset["attack_rogue_string"],
         )
@@ -163,9 +158,7 @@ def _join_prompt_attack(preset):
         repeated_escape = f"{single_escape*preset['attack_settings_escape_times']}"
         if repeated_escape:
             repeated_escape += "\n"
-        joined_attack = repeated_escape + attack_instruction_formatted
-
-        return joined_attack
+        return repeated_escape + attack_instruction_formatted
     else:
         return ""
 
@@ -263,6 +256,4 @@ def build_prompts(preset):
 
     product_list = _product_from_iterables(merged_prompt_dicts)
 
-    built_products = _build_product_list(product_list, merged_prompt_dicts)
-
-    return built_products
+    return _build_product_list(product_list, merged_prompt_dicts)

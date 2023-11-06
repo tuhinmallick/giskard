@@ -250,7 +250,7 @@ class GiskardClient:
             logger.info(f"Artifact {artifact_path} already exists, skipping download")
             return
 
-        files = self._session.get("artifact-info/" + artifact_path)
+        files = self._session.get(f"artifact-info/{artifact_path}")
         augmented_raise_for_status(files)
 
         for f in files.json():

@@ -60,8 +60,8 @@ def pytest_terminal_summary(terminalreporter: TerminalReporter, exitstatus: Exit
         writer.write(f"| Total | {total} |\n\n")
 
         # Extract failures and errors to get more details
-        failures: List[TestReport] = [report for report in terminalreporter.stats.get("failed", [])]
-        errors: List[CollectReport] = [report for report in terminalreporter.stats.get("error", [])]
+        failures: List[TestReport] = list(terminalreporter.stats.get("failed", []))
+        errors: List[CollectReport] = list(terminalreporter.stats.get("error", []))
 
         # Write a summary of all test, to easily check is one test ran or not
         writer.write("### All tests results\n\n")
