@@ -75,19 +75,19 @@ def slice_bounds_relative(
     Returns:
         tuple: Lower and upper bounds of the slice
     """
-    if ds.column_types[feature] == "numeric":
-        add_value = value * window_size / 2.0
-        up = value + add_value if value > 0 else value - add_value
-        low = value - add_value if value > 0 else value + add_value
+    if ds.column_types[feature] != "numeric":
+        return None
+    add_value = value * window_size / 2.0
+    up = value + add_value if value > 0 else value - add_value
+    low = value - add_value if value > 0 else value + add_value
 
-        _max = ds.df[feature].max()
-        _min = ds.df[feature].min()
+    _max = ds.df[feature].max()
+    _min = ds.df[feature].min()
 
-        up = up if up <= _max else _max
-        low = low if low >= _min else _min
+    up = up if up <= _max else _max
+    low = low if low >= _min else _min
 
-        return (low, up)
-    return None
+    return (low, up)
 
 
 def coltype_to_supported_perturbation_type(coltype: str) -> SupportedPerturbationType:

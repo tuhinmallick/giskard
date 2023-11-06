@@ -27,13 +27,11 @@ class SliceFinder:
             for type_val in ["numeric", "category", "text"]
         }
 
-        sliced_features = {}
-
         # Numerical features
         slicer = get_slicer(self.numerical_slicer, dataset, target)
-        for col in cols_by_type["numeric"]:
-            sliced_features[col] = slicer.find_slices([col])
-
+        sliced_features = {
+            col: slicer.find_slices([col]) for col in cols_by_type["numeric"]
+        }
         # Categorical features
         slicer = CategorySlicer(dataset, target=target)
         for col in cols_by_type["category"]:

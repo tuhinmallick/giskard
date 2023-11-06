@@ -96,10 +96,7 @@ class DecisionTreeSlicer(BaseSlicer):
             logger.debug("No split found, stopping now.")
             return []
 
-        # Make test slices
-        slice_candidates = make_slices_from_tree(dt.tree_, features)
-
-        return slice_candidates
+        return make_slices_from_tree(dt.tree_, features)
 
     def _choose_tree_criterion(self, target_samples: np.ndarray):
         norm_ks_stat = stats.kstest(target_samples, "norm").statistic
@@ -108,7 +105,4 @@ class DecisionTreeSlicer(BaseSlicer):
         if norm_ks_stat <= expon_ks_stat:
             return "friedman_mse"
 
-        if np.all(target_samples >= 0):
-            return "poisson"
-
-        return "squared_error"
+        return "poisson" if np.all(target_samples >= 0) else "squared_error"

@@ -54,8 +54,7 @@ class CloudpickleSerializableModel(WrapperModel):
         model_path = local_path / "model.pkl"
         if model_path.exists():
             with open(model_path, "rb") as f:
-                model = cloudpickle.load(f)
-                return model
+                return cloudpickle.load(f)
         else:
             raise ValueError(
                 "We couldn't load your model with cloudpickle. Please provide us with your own "

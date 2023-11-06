@@ -26,6 +26,6 @@ class DetectorRegistry:
     @classmethod
     def get_detector_classes(cls, tags: Optional[Sequence[str]] = None) -> dict:
         if tags is None:
-            return {n: d for n, d in cls._detectors.items()}
+            return dict(cls._detectors.items())
 
         return {n: d for n, d in cls._detectors.items() if cls._tags[n].intersection(tags)}

@@ -81,9 +81,10 @@ class _LlmConfig:
         return ChatOpenAI(model_name=model, **kwargs)
 
     def set_scan_llm(self, scan_llm: str):
-        if scan_llm not in ["gpt-3.5", "hybrid", "gpt-4"]:
+        if scan_llm in {"gpt-3.5", "hybrid", "gpt-4"}:
+            self._scan_model = scan_llm
+        else:
             raise ValueError("Scan only support 'gpt-3.5', 'hybrid' or 'gpt-4' models")
-        self._scan_model = scan_llm
 
 
 llm_config = _LlmConfig()

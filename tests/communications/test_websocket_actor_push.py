@@ -68,9 +68,7 @@ def test_websocket_actor_get_push_do_nothing(model, data, request):
         assert not reply.action
 
 
-@pytest.mark.parametrize("cta_kind",[
-    kind for kind in websocket.CallToActionKind
-])
+@pytest.mark.parametrize("cta_kind", list(websocket.CallToActionKind))
 def test_websocket_actor_get_push_no_push_kind(cta_kind, request):
     model: BaseModel = request.getfixturevalue("enron_model")
     dataset: Dataset = request.getfixturevalue("enron_data")
@@ -109,9 +107,7 @@ def test_websocket_actor_get_push_no_push_kind(cta_kind, request):
         assert not reply.action
 
 
-@pytest.mark.parametrize("push_kind",[
-    kind for kind in websocket.PushKind
-])
+@pytest.mark.parametrize("push_kind", list(websocket.PushKind))
 def test_websocket_actor_get_push_no_cta_kind(push_kind, request):
     model: BaseModel = request.getfixturevalue("enron_model")
     dataset: Dataset = request.getfixturevalue("enron_data")
@@ -439,10 +435,7 @@ def test_websocket_actor_get_push_overconfidence_borderline_cta_save_example(kin
         assert reply.action # Action should not be `None`
 
 
-@pytest.mark.parametrize("kind,row", [
-    EXPECTED_COUNTS_GERMAN_CREDIT_PUSH_KIND_SAMPLE_INDEX[k] for k in EXPECTED_COUNTS_GERMAN_CREDIT_PUSH_KIND_SAMPLE_INDEX \
-        if k != websocket.PushKind.OVERCONFIDENCE and k != websocket.PushKind.BORDERLINE
-])
+@pytest.mark.parametrize("kind,row", [EXPECTED_COUNTS_GERMAN_CREDIT_PUSH_KIND_SAMPLE_INDEX[k] for k in EXPECTED_COUNTS_GERMAN_CREDIT_PUSH_KIND_SAMPLE_INDEX if k not in [websocket.PushKind.OVERCONFIDENCE, websocket.PushKind.BORDERLINE]])
 @pytest.mark.parametrize("cta_kind", [
     websocket.CallToActionKind.SAVE_EXAMPLE,
 ])

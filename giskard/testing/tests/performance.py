@@ -60,7 +60,7 @@ def _test_classification_score(
     else:
         metric = score_fn(targets, prediction, average="micro")
 
-    passed = bool(metric >= threshold)
+    passed = metric >= threshold
 
     # --- debug ---
     output_ds = None
@@ -79,7 +79,7 @@ def _test_accuracy_score(dataset: Dataset, model: BaseModel, threshold: float = 
     targets = dataset.df[dataset.target]
 
     metric = accuracy_score(targets, prediction)
-    passed = bool(metric >= threshold)
+    passed = metric >= threshold
 
     # --- debug ---
     output_ds = None
@@ -108,7 +108,7 @@ def _test_regression_score(
 
     metric = score_fn(targets, raw_prediction)
 
-    passed = bool(metric >= threshold if r2 else metric <= threshold)
+    passed = metric >= threshold if r2 else metric <= threshold
 
     # --- debug ---
     output_ds = None
@@ -244,7 +244,7 @@ def test_auc(
 
         metric = roc_auc_score(targets, predictions, multi_class="ovo")
 
-    passed = bool(metric >= threshold)
+    passed = metric >= threshold
 
     # --- debug ---
     output_ds = None

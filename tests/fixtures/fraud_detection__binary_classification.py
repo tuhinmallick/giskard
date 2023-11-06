@@ -142,19 +142,23 @@ def preprocess_dataset(train_set, test_set):
 @pytest.fixture()
 def fraud_detection_data() -> Dataset:
     _, test_set = preprocess_dataset(*read_dataset())
-    wrapped_dataset = Dataset(
-        test_set, name="fraud_detection_adversarial_dataset", target=TARGET_COLUMN, cat_columns=CATEGORICALS
+    return Dataset(
+        test_set,
+        name="fraud_detection_adversarial_dataset",
+        target=TARGET_COLUMN,
+        cat_columns=CATEGORICALS,
     )
-    return wrapped_dataset
 
 
 @pytest.fixture()
 def fraud_detection_train_data() -> Dataset:
     train_set, _ = preprocess_dataset(*read_dataset())
-    wrapped_dataset = Dataset(
-        train_set, name="fraud_detection_adversarial_dataset", target=TARGET_COLUMN, cat_columns=CATEGORICALS
+    return Dataset(
+        train_set,
+        name="fraud_detection_adversarial_dataset",
+        target=TARGET_COLUMN,
+        cat_columns=CATEGORICALS,
     )
-    return wrapped_dataset
 
 
 @pytest.fixture()
@@ -167,7 +171,7 @@ def fraud_detection_model(fraud_detection_train_data: Dataset) -> Model:
     estimator = LGBMClassifier(random_state=30)
     estimator.fit(x, y)
 
-    wrapped_model = Model(
+    return Model(
         estimator,
         model_type="classification",
         name="train_test_data_classifier",
@@ -175,5 +179,3 @@ def fraud_detection_model(fraud_detection_train_data: Dataset) -> Model:
         classification_threshold=0.5,
         classification_labels=[0, 1],
     )
-
-    return wrapped_model

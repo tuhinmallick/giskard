@@ -64,11 +64,9 @@ class StringMatcher(Evaluator):
                 failed += 1
 
         if evaluation_method.all_substrings_must_be_found:
-            failed = 1 if failed == len(evaluation_method.substrings) else 0
+            return 1 if failed == len(evaluation_method.substrings) else 0
         else:
-            failed = 1 if failed != 0 else 0
-
-        return failed
+            return 1 if failed != 0 else 0
 
 
 def evaluate(prediction: str, prompt: Prompt):

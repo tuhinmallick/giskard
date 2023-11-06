@@ -39,11 +39,7 @@ def test(
 
         return _wrap_test_method(original)
 
-    if callable(_fn):
-        # in case @test decorator was used without parenthesis
-        return functools.wraps(_fn)(inner(_fn))
-    else:
-        return inner
+    return functools.wraps(_fn)(inner(_fn)) if callable(_fn) else inner
 
 
 def _wrap_test_method(original):

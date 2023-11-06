@@ -155,10 +155,13 @@ class IssueFinder:
 
     def _get_default_metrics(self, model: BaseModel, dataset: Dataset):
         if model.is_classification:
-            metrics = ["precision", "recall"]
-            metrics.append("balanced_accuracy" if _is_unbalanced_target(dataset.df[dataset.target]) else "accuracy")
-            return metrics
-
+            return [
+                "precision",
+                "recall",
+                "balanced_accuracy"
+                if _is_unbalanced_target(dataset.df[dataset.target])
+                else "accuracy",
+            ]
         return ["mse", "mae"]
 
     def _detect_for_metric(

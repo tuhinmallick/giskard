@@ -333,7 +333,7 @@ def test_websocket_actor_explain_text_ws_regression(internal, request):
 
     project_key = str(uuid.uuid4()) # Use a UUID to separate the resources used by the tests
 
-    with utils.MockedProjectCacheDir(project_key), utils.MockedClient(mock_all=False) as (client, mr):
+    with (utils.MockedProjectCacheDir(project_key), utils.MockedClient(mock_all=False) as (client, mr)):
         # Prepare model and dataset
         if internal:
             utils.local_save_model_under_giskard_home_cache(model, project_key)
@@ -341,11 +341,14 @@ def test_websocket_actor_explain_text_ws_regression(internal, request):
             utils.register_uri_for_model_meta_info(mr, model, project_key)
             utils.register_uri_for_model_artifact_info(mr, model, project_key, register_file_contents=True)
 
-        text_feature_name = None
-        for col_name, col_type in dataset.column_types.items():
-            if col_type == "text":
-                text_feature_name = col_name
-                break
+        text_feature_name = next(
+            (
+                col_name
+                for col_name, col_type in dataset.column_types.items()
+                if col_type == "text"
+            ),
+            None,
+        )
         assert text_feature_name
 
         params = websocket.ExplainTextParam(
@@ -369,7 +372,7 @@ def test_websocket_actor_explain_text_ws_classification(internal, request):
 
     project_key = str(uuid.uuid4()) # Use a UUID to separate the resources used by the tests
 
-    with utils.MockedProjectCacheDir(project_key), utils.MockedClient(mock_all=False) as (client, mr):
+    with (utils.MockedProjectCacheDir(project_key), utils.MockedClient(mock_all=False) as (client, mr)):
         # Prepare model and dataset
         if internal:
             utils.local_save_model_under_giskard_home_cache(model, project_key)
@@ -378,11 +381,14 @@ def test_websocket_actor_explain_text_ws_classification(internal, request):
             utils.register_uri_for_model_artifact_info(mr, model, project_key, register_file_contents=True)
 
 
-        text_feature_name = None
-        for col_name, col_type in dataset.column_types.items():
-            if col_type == "text":
-                text_feature_name = col_name
-                break
+        text_feature_name = next(
+            (
+                col_name
+                for col_name, col_type in dataset.column_types.items()
+                if col_type == "text"
+            ),
+            None,
+        )
         assert text_feature_name
 
         params = websocket.ExplainTextParam(
@@ -406,7 +412,7 @@ def test_websocket_actor_dataset_processing_empty(internal, request):
 
     project_key = str(uuid.uuid4()) # Use a UUID to separate the resources used by the tests
 
-    with utils.MockedProjectCacheDir(project_key), utils.MockedClient(mock_all=False) as (client, mr):
+    with (utils.MockedProjectCacheDir(project_key), utils.MockedClient(mock_all=False) as (client, mr)):
         # Prepare dataset
         if internal:
             utils.local_save_dataset_under_giskard_home_cache(dataset, project_key)
@@ -426,11 +432,11 @@ def test_websocket_actor_dataset_processing_empty(internal, request):
         reply = listener.dataset_processing(client=None if internal else client, params=params)
         assert isinstance(reply, websocket.DatasetProcessing)
         assert reply.datasetId == str(dataset.id)
-        assert reply.totalRows == len(list(dataset.df.index))   
+        assert reply.totalRows == len(list(dataset.df.index))
         # No line filtered
-        assert reply.filteredRows is not None and 0 == len(reply.filteredRows)
+        assert reply.filteredRows is not None and len(reply.filteredRows) == 0
         # No line modified
-        assert reply.modifications is not None and 0 == len(reply.modifications)
+        assert reply.modifications is not None and len(reply.modifications) == 0
 
 
 # Define a slicing function
@@ -479,11 +485,11 @@ def test_websocket_actor_dataset_processing_head_slicing_with_cache(callable_und
             reply = listener.dataset_processing(client=client, params=params)
             assert isinstance(reply, websocket.DatasetProcessing)
             assert reply.datasetId == str(dataset.id)
-            assert reply.totalRows == len(list(dataset.df.index))   
+            assert reply.totalRows == len(list(dataset.df.index))
             # One line not filtered
             assert reply.filteredRows is not None and reply.totalRows - 1 == len(reply.filteredRows)
             # No line modified
-            assert reply.modifications is not None and 0 == len(reply.modifications)
+            assert reply.modifications is not None and len(reply.modifications) == 0
 
 
 # Define a transformation function
@@ -532,8 +538,8 @@ def test_websocket_actor_dataset_processing_do_nothing_transform_with_cache(call
             reply = listener.dataset_processing(client=client, params=params)
             assert isinstance(reply, websocket.DatasetProcessing)
             assert reply.datasetId == str(dataset.id)
-            assert reply.totalRows == len(list(dataset.df.index))   
+            assert reply.totalRows == len(list(dataset.df.index))
             # No line filtered
-            assert reply.filteredRows is not None and 0 == len(reply.filteredRows)
+            assert reply.filteredRows is not None and len(reply.filteredRows) == 0
             # No line modified
-            assert reply.modifications is not None and 0 == len(reply.modifications)
+            assert reply.modifications is not None and len(reply.modifications) == 0

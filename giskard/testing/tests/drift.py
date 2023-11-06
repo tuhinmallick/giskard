@@ -46,10 +46,9 @@ def _calculate_psi(category, actual_distribution, expected_distribution):
 
     expected_distribution_bounded = max(expected_distribution[category], min_distribution_probability)
     actual_distribution_bounded = max(actual_distribution[category], min_distribution_probability)
-    modality_psi = (expected_distribution_bounded - actual_distribution_bounded) * np.log(
-        expected_distribution_bounded / actual_distribution_bounded
-    )
-    return modality_psi
+    return (
+        expected_distribution_bounded - actual_distribution_bounded
+    ) * np.log(expected_distribution_bounded / actual_distribution_bounded)
 
 
 def _calculate_frequencies(actual_series, reference_series, max_categories=None):
@@ -109,14 +108,12 @@ def _calculate_earth_movers_distance(actual_series, reference_series):
     val_max = max(sample_space)
     val_min = min(sample_space)
     if val_max == val_min:
-        metric = 0
-    else:
-        # Normalizing reference_series and actual_series for comparison purposes
-        reference_series = (reference_series - val_min) / (val_max - val_min)
-        actual_series = (actual_series - val_min) / (val_max - val_min)
+        return 0
+    # Normalizing reference_series and actual_series for comparison purposes
+    reference_series = (reference_series - val_min) / (val_max - val_min)
+    actual_series = (actual_series - val_min) / (val_max - val_min)
 
-        metric = wasserstein_distance(reference_series, actual_series)
-    return metric
+    return wasserstein_distance(reference_series, actual_series)
 
 
 def _calculate_chi_square(actual_series, reference_series, max_categories):
@@ -264,8 +261,9 @@ def test_drift_psi(
     if not passed and debug:
         check_if_debuggable(actual_dataset, reference_dataset)
         main_drifting_modalities_bool = output_data["Psi"] > psi_contribution_percent * total_psi
-        modalities_list = output_data[main_drifting_modalities_bool]["Modality"].tolist()
-        if modalities_list:
+        if modalities_list := output_data[main_drifting_modalities_bool][
+            "Modality"
+        ].tolist():
             filtered_modalities = [w for w in modalities_list if not re.match(other_modalities_pattern, str(w))]
             output_ds = actual_dataset.copy()  # copy all properties
             output_ds.df = actual_dataset.df.loc[actual_series.isin(filtered_modalities)]
@@ -367,8 +365,9 @@ def test_drift_chi_square(
     if not passed and debug:
         check_if_debuggable(actual_dataset, reference_dataset)
         main_drifting_modalities_bool = output_data["Chi_square"] > chi_square_contribution_percent * chi_square
-        modalities_list = output_data[main_drifting_modalities_bool]["Modality"].tolist()
-        if modalities_list:
+        if modalities_list := output_data[main_drifting_modalities_bool][
+            "Modality"
+        ].tolist():
             filtered_modalities = [w for w in modalities_list if not re.match(other_modalities_pattern, str(w))]
             output_ds = actual_dataset.copy()  # copy all properties
             output_ds.df = actual_dataset.df.loc[actual_series.isin(filtered_modalities)]
@@ -435,7 +434,7 @@ def test_drift_ks(
 
     result = _calculate_ks(actual_series, reference_series)
 
-    passed = bool(result.pvalue >= threshold)
+    passed = result.pvalue >= threshold
 
     messages = _generate_message_ks(passed, result, threshold, "data")
 
@@ -497,7 +496,7 @@ def test_drift_earth_movers_distance(
 
     metric = _calculate_earth_movers_distance(actual_series, reference_series)
 
-    passed = bool(metric <= threshold)
+    passed = metric <= threshold
 
     messages: Optional[List[TestMessage]] = None
 
@@ -596,8 +595,9 @@ def test_drift_prediction_psi(
     if not passed and debug:
         check_if_debuggable(actual_dataset, reference_dataset)
         main_drifting_modalities_bool = output_data["Psi"] > psi_contribution_percent * total_psi
-        modalities_list = output_data[main_drifting_modalities_bool]["Modality"].tolist()
-        if modalities_list:
+        if modalities_list := output_data[main_drifting_modalities_bool][
+            "Modality"
+        ].tolist():
             filtered_modalities = [w for w in modalities_list if not re.match(other_modalities_pattern, str(w))]
             output_ds = actual_dataset.copy()  # copy all properties
             output_ds.df = actual_dataset.df.loc[prediction_actual.isin(filtered_modalities).values]
@@ -629,7 +629,7 @@ def _test_series_drift_psi(
     threshold,
 ):
     total_psi, output_data = _calculate_drift_psi(actual_series, reference_series, max_categories)
-    passed = True if threshold is None else bool(total_psi <= threshold)
+    passed = True if threshold is None else total_psi <= threshold
     main_drifting_modalities_bool = output_data["Psi"] > psi_contribution_percent * total_psi
     messages = _generate_message_modalities(main_drifting_modalities_bool, output_data, test_data)
     return messages, passed, total_psi, output_data
@@ -637,16 +637,22 @@ def _test_series_drift_psi(
 
 def _generate_message_modalities(main_drifting_modalities_bool, output_data, test_data):
     modalities_list = output_data[main_drifting_modalities_bool]["Modality"].tolist()
-    filtered_modalities = [w for w in modalities_list if not re.match(other_modalities_pattern, str(w))]
-    messages: Optional[List[TestMessage]] = None
-    if filtered_modalities:
-        messages = [
+    return (
+        [
             TestMessage(
                 type=TestMessageLevel.ERROR,
                 text=f"The {test_data} is drifting for the following modalities: {','.join(str(filtered_modalities))}",
             )
         ]
-    return messages
+        if (
+            filtered_modalities := [
+                w
+                for w in modalities_list
+                if not re.match(other_modalities_pattern, str(w))
+            ]
+        )
+        else None
+    )
 
 
 @test(
@@ -729,8 +735,9 @@ def test_drift_prediction_chi_square(
     if not passed and debug:
         check_if_debuggable(actual_dataset, reference_dataset)
         main_drifting_modalities_bool = output_data["Chi_square"] > chi_square_contribution_percent * chi_square
-        modalities_list = output_data[main_drifting_modalities_bool]["Modality"].tolist()
-        if modalities_list:
+        if modalities_list := output_data[main_drifting_modalities_bool][
+            "Modality"
+        ].tolist():
             filtered_modalities = [w for w in modalities_list if not re.match(other_modalities_pattern, str(w))]
             output_ds = actual_dataset.copy()  # copy all properties
             output_ds.df = actual_dataset.df.loc[prediction_actual.isin(filtered_modalities).values]
@@ -757,7 +764,7 @@ def _test_series_drift_chi(
     threshold,
 ):
     chi_square, p_value, output_data = _calculate_chi_square(actual_series, reference_series, max_categories)
-    passed = bool(p_value > threshold)
+    passed = p_value > threshold
     main_drifting_modalities_bool = output_data["Chi_square"] > chi_square_contribution_percent * chi_square
     messages = _generate_message_modalities(main_drifting_modalities_bool, output_data, test_data)
     return messages, chi_square, p_value, passed, output_data
@@ -834,7 +841,7 @@ def test_drift_prediction_ks(
 
     result: Ks_2sampResult = _calculate_ks(prediction_reference, prediction_actual)
 
-    passed = True if threshold is None else bool(result.pvalue >= threshold)
+    passed = True if threshold is None else result.pvalue >= threshold
 
     messages = _generate_message_ks(passed, result, threshold, "prediction")
 
@@ -848,16 +855,17 @@ def test_drift_prediction_ks(
 
 
 def _generate_message_ks(passed, result, threshold, data_type):
-    messages: Optional[List[TestMessage]] = None
-    if not passed:
-        messages = [
+    return (
+        [
             TestMessage(
                 type=TestMessageLevel.ERROR,
                 text=f"The {data_type} is drifting (p-value is equal to {np.round(result.pvalue, 9)} "
                 f"and is below the test risk level {threshold}) ",
             )
         ]
-    return messages
+        if not passed
+        else None
+    )
 
 
 @test(name="Classification Probability drift (Earth mover's distance)", tags=["classification"])
@@ -930,7 +938,7 @@ def test_drift_prediction_earth_movers_distance(
 
     metric = _calculate_earth_movers_distance(prediction_reference, prediction_actual)
 
-    passed = True if threshold is None else bool(metric <= threshold)
+    passed = True if threshold is None else metric <= threshold
     messages: Optional[typing.List[TestMessage]] = None
 
     if not passed:
@@ -945,7 +953,7 @@ def test_drift_prediction_earth_movers_distance(
     return TestResult(
         actual_slices_size=[len(actual_dataset)],
         reference_slices_size=[len(reference_dataset)],
-        passed=bool(True if threshold is None else metric <= threshold),
+        passed=True if threshold is None else metric <= threshold,
         metric=metric,
         messages=messages,
     )

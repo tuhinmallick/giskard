@@ -41,19 +41,16 @@ def match_model_id(my_model_id):
 
 def match_url_patterns(last_requests, url_pattern):
     artifact_requests = [i for i in last_requests if url_pattern.match(i.url)]
-    assert len(artifact_requests) > 0
+    assert artifact_requests
     for req in artifact_requests:
         assert int(req.headers.get("Content-Length")) > 0
         for header_name in headers_to_match.keys():
-            if header_name in dict(req.headers).keys():
+            if header_name in dict(req.headers):
                 assert req.headers.get(header_name) == headers_to_match[header_name]
 
 
 def is_url_requested(last_requests, url):
-    for i in last_requests:
-        if i.url == url:
-            return True
-    return False
+    return any(i.url == url for i in last_requests)
 
 
 class MockedClient:
@@ -139,7 +136,10 @@ def get_email_files():
         file = tarfile.open(fileobj=response.raw, mode="r|gz")
         os.makedirs(out_path, exist_ok=True)
         file.extractall(path=out_path)
-    return [f.replace(".cats", "") for f in glob.glob(str(enron_path) + "/*/*.cats")]
+    return [
+        f.replace(".cats", "")
+        for f in glob.glob(f"{str(enron_path)}/*/*.cats")
+    ]
 
 
 class MockedWebSocketMLWorker:

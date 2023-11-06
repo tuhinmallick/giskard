@@ -16,7 +16,7 @@ from ..utils.display import format_number
 
 
 def escape(value) -> str:
-    return str(value) if not isinstance(value, str) else "%s" % value
+    return str(value) if not isinstance(value, str) else f"{value}"
 
 
 def _decode(series: pd.Series) -> pd.Series:
@@ -247,10 +247,7 @@ class Query:
         return list(itertools.chain(*self.clauses.values()))
 
     def run(self, df: pd.DataFrame) -> pd.DataFrame:
-        if len(self.clauses) < 1:
-            return df
-
-        return df[self.mask(df)]
+        return df if len(self.clauses) < 1 else df[self.mask(df)]
 
     def mask(self, df: pd.DataFrame):
         mask = pd.Series(np.ones(len(df), dtype=bool), index=df.index)
@@ -318,7 +315,4 @@ def _pretty_str(value):
     if isinstance(value, (float, int)):
         return format_number(value, 3)
 
-    if isinstance(value, str):
-        return f'"{value}"'
-
-    return str(value)
+    return f'"{value}"' if isinstance(value, str) else str(value)

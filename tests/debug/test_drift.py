@@ -38,10 +38,10 @@ def test_data_drift_psi_detailed(dataset, male_drift_samples, request):
     actual_distribution = actual_frequencies / len(actual_series)  # [0.696 0.304]
     total_psi = 0
     output_data = pd.DataFrame(columns=["Modality", "Reference_distribution", "Actual_distribution", "Psi"])
-    for category in range(len(all_modalities)):
-        # --- deciphering _calculate_psi
-        min_distribution_probability = 0.0001
+    # --- deciphering _calculate_psi
+    min_distribution_probability = 0.0001
 
+    for category in range(len(all_modalities)):
         expected_distribution_bounded = max(expected_distribution[category], min_distribution_probability)
         actual_distribution_bounded = max(actual_distribution[category], min_distribution_probability)
         modality_psi = (expected_distribution_bounded - actual_distribution_bounded) * np.log(

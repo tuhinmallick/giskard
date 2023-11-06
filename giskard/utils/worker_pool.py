@@ -42,7 +42,7 @@ def _safe_exit_code(p: Process) -> int:
 
 def _wait_process_stop(p_list: List[Process], timeout: float = 1):
     end_time = time.monotonic() + timeout
-    while any([_safe_is_alive(p) for p in p_list]) and time.monotonic() < end_time:
+    while any(_safe_is_alive(p) for p in p_list) and time.monotonic() < end_time:
         sleep(0.1)
 
 
@@ -210,19 +210,17 @@ class WorkerPoolExecutor(Executor):
                 self._state = PoolState.BROKEN
                 raise e
             return None, True
-        if self.terminated():
-            return None, True
-        return result, False
+        return (None, True) if self.terminated() else (result, False)
 
     def health_check(self):
         if self.terminated():
             return
         broken_pool = False
-        if any([not t.is_alive() for t in self._threads]):
+        if any(not t.is_alive() for t in self._threads):
             LOGGER.error("At least one thread died for an unknown reason, marking pool as broken")
             LOGGER.error("Dead threads: %s", [t.name for t in self._threads if not t.is_alive()])
             broken_pool = True
-        if any([not _safe_is_alive(p) for p in self.processes.values()]):
+        if any(not _safe_is_alive(p) for p in self.processes.values()):
             LOGGER.error("At least one process died for an unknown reason, marking pool as broken")
             LOGGER.error(
                 "Non null exit codes: %s",

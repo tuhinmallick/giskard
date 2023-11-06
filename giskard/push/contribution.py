@@ -206,10 +206,7 @@ def _detect_shap_outlier(global_feature_shap):
 
     zscore_array = np.round(zscore(list(global_feature_shap.values())) * 2) / 2
 
-    if zscore_array[-1] >= 2:
-        return keys[-1]
-    else:
-        return None
+    return keys[-1] if zscore_array[-1] >= 2 else None
 
 
 def _detect_text_shap_outlier(global_feature_shap):
@@ -230,10 +227,7 @@ def _detect_text_shap_outlier(global_feature_shap):
     zscore_array = zscore(list(global_feature_shap.values()))
     max_idx = np.argmax(zscore_array)
 
-    if zscore_array[max_idx] >= 2:
-        return keys[max_idx]
-    else:
-        return None
+    return keys[max_idx] if zscore_array[max_idx] >= 2 else None
 
 
 def _get_shap_values(model: BaseModel, ds: Dataset, df: pd.DataFrame):
@@ -276,5 +270,4 @@ def _existing_shap_values(ds: Dataset):
     feature_types = list(ds.column_types.values())
     if "text" in feature_types:
         feature_types.remove("text")
-    shap_values_exist = len(feature_types) >= 2
-    return shap_values_exist
+    return len(feature_types) >= 2

@@ -100,7 +100,7 @@ def test_overconfidence_rate(
         output_ds.name = debug_prefix + test_name
     # ---
 
-    return TestResult(passed=bool(passed), metric=rate, output_df=output_ds)
+    return TestResult(passed=passed, metric=rate, output_df=output_ds)
 
 
 def _calculate_underconfidence_score(model: BaseModel, dataset: Dataset) -> pd.Series:
@@ -181,4 +181,4 @@ def test_underconfidence_rate(
         output_ds.name = debug_prefix + test_name
     # ---
 
-    return TestResult(passed=bool(passed), metric=rate, output_df=output_ds)
+    return TestResult(passed=passed, metric=rate, output_df=output_ds)

@@ -110,7 +110,11 @@ def new_getfile(object, _old_getfile=inspect.getfile):
 
     # If parent module is __main__, lookup by methods (NEW)
     for name, member in inspect.getmembers(object):
-        if inspect.isfunction(member) and object.__qualname__ + "." + member.__name__ == member.__qualname__:
+        if (
+            inspect.isfunction(member)
+            and f"{object.__qualname__}.{member.__name__}"
+            == member.__qualname__
+        ):
             return inspect.getfile(member)
 
     raise TypeError("Source for {!r} not found".format(object))

@@ -172,10 +172,7 @@ def validate_model_loading_and_saving(model: BaseModel):
             del constructor_params["loader_module"]
             del constructor_params["loader_class"]
 
-            loaded_model = clazz.load(f, **constructor_params)
-
-            return loaded_model
-
+            return clazz.load(f, **constructor_params)
     except Exception as e:
         raise ValueError("Failed to validate model saving and loading from local disk") from e
 
@@ -204,21 +201,27 @@ def validate_model_type(model_type: ModelType):
 @configured_validate_arguments
 def validate_classification_labels(classification_labels: Union[np.ndarray, List, None], model_type: ModelType):
     if model_type == SupportedModelTypes.CLASSIFICATION:
-        if classification_labels is not None and isinstance(classification_labels, Iterable):
-            if len(classification_labels) <= 1:
-                raise ValueError(
-                    f"Invalid classification_labels parameter: {classification_labels}. "
-                    f"Please specify more than 1 label."
-                )
-        else:
+        if classification_labels is None or not isinstance(
+            classification_labels, Iterable
+        ):
             raise ValueError(
                 f"Invalid classification_labels parameter: {classification_labels}. "
                 f"Please specify valid list of strings."
             )
 
+        if len(classification_labels) <= 1:
+            raise ValueError(
+                f"Invalid classification_labels parameter: {classification_labels}. "
+                f"Please specify more than 1 label."
+            )
     if (
-        model_type == SupportedModelTypes.REGRESSION or model_type == SupportedModelTypes.TEXT_GENERATION
-    ) and classification_labels is not None:
+        model_type
+        in [
+            SupportedModelTypes.REGRESSION,
+            SupportedModelTypes.TEXT_GENERATION,
+        ]
+        and classification_labels is not None
+    ):
         warning("'classification_labels' parameter is ignored for regression model")
 
 
@@ -239,12 +242,12 @@ def validate_classification_threshold_label(
 ):
     if classification_labels is None:
         raise ValueError("Missing classification_labels parameter for classification model.")
-    if classification_threshold is not None and not isinstance(classification_threshold, (int, float)):
-        raise ValueError(
-            f"Invalid classification_threshold parameter: {classification_threshold}. Please specify valid number."
-        )
-
     if classification_threshold is not None:
+        if not isinstance(classification_threshold, (int, float)):
+            raise ValueError(
+                f"Invalid classification_threshold parameter: {classification_threshold}. Please specify valid number."
+            )
+
         if not np.isclose(classification_threshold, 0.5, rtol=1e-09, atol=1e-09) and len(classification_labels) != 2:
             raise ValueError(
                 f"Invalid classification_threshold parameter: {classification_threshold} value is applicable "
@@ -260,7 +263,7 @@ def validate_label_with_target(
     target_name: str = None,
 ):
     if target_values is not None:
-        to_append = " of the model: " + model_name if model_name else ""
+        to_append = f" of the model: {model_name}" if model_name else ""
         target_values = list(target_values)
         if not set(target_values).issubset(set(classification_labels)):
             invalid_target_values = set(target_values) - set(classification_labels)
@@ -276,18 +279,17 @@ def validate_prediction_output(ds: Dataset, model_type: ModelType, prediction):
         f"Number of rows ({len(ds.df)}) of dataset provided does not match with the "
         f"number of rows ({len(prediction)}) of model.predict output"
     )
-    if isinstance(prediction, np.ndarray) or isinstance(prediction, list):
-        if model_type == SupportedModelTypes.CLASSIFICATION:
-            if not any(isinstance(y, (np.floating, float)) for x in prediction for y in x):
-                raise ValueError("Model prediction should return float values ")
-        if model_type == SupportedModelTypes.REGRESSION:
-            if not any(isinstance(x, (np.floating, float)) for x in prediction):
-                raise ValueError("Model prediction should return float values ")
-        if model_type == SupportedModelTypes.TEXT_GENERATION:
-            if not any(isinstance(x, str) for x in prediction):
-                raise ValueError("Model prediction should return string values ")
-    else:
+    if not isinstance(prediction, (np.ndarray, list)):
         raise ValueError("Model should return numpy array or a list")
+    if model_type == SupportedModelTypes.CLASSIFICATION:
+        if not any(isinstance(y, (np.floating, float)) for x in prediction for y in x):
+            raise ValueError("Model prediction should return float values ")
+    if model_type == SupportedModelTypes.REGRESSION:
+        if not any(isinstance(x, (np.floating, float)) for x in prediction):
+            raise ValueError("Model prediction should return float values ")
+    if model_type == SupportedModelTypes.TEXT_GENERATION:
+        if not any(isinstance(x, str) for x in prediction):
+            raise ValueError("Model prediction should return string values ")
 
 
 @configured_validate_arguments
@@ -302,8 +304,6 @@ def validate_classification_prediction(classification_labels: Union[np.ndarray, 
             "Sum of output values of model.predict is not equal to 1."
             " For Multiclass and Binary classifications, the sum of probabilities should be 1"
         )
-    if prediction.shape[1] != len(classification_labels):
-        raise ValueError("Prediction output label shape and classification_labels shape do not match")
     if prediction.shape[1] != len(classification_labels):
         raise ValueError("Prediction output label shape and classification_labels shape do not match")
 

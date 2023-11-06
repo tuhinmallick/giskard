@@ -195,8 +195,7 @@ def get_metric(metric_name: str):
     if isinstance(metric_name, PerformanceMetric):
         return metric_name
 
-    metric_cls = _metrics_register.get(metric_name)
-    if not metric_cls:
+    if metric_cls := _metrics_register.get(metric_name):
+        return metric_cls()
+    else:
         raise ValueError(f"Unknown metric '{metric_name}'")
-
-    return metric_cls()

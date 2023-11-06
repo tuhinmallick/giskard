@@ -172,14 +172,13 @@ class BaseModel(ABC):
     @classmethod
     def determine_model_class(cls, meta, local_dir):
         class_file = Path(local_dir) / MODEL_CLASS_PKL
-        if class_file.exists():
-            with open(class_file, "rb") as f:
-                clazz = cloudpickle.load(f)
-                if not issubclass(clazz, BaseModel):
-                    raise ValueError(f"Unknown model class: {clazz}. Models should inherit from 'BaseModel' class")
-                return clazz
-        else:
+        if not class_file.exists():
             return getattr(importlib.import_module(meta.loader_module), meta.loader_class)
+        with open(class_file, "rb") as f:
+            clazz = cloudpickle.load(f)
+            if not issubclass(clazz, BaseModel):
+                raise ValueError(f"Unknown model class: {clazz}. Models should inherit from 'BaseModel' class")
+            return clazz
 
     def save_meta(self, local_path):
         with (Path(local_path) / META_FILENAME).open(mode="w", encoding="utf-8") as f:
@@ -239,8 +238,8 @@ class BaseModel(ABC):
                 df.drop(target, axis=1, inplace=True)
             if column_dtypes and target in column_dtypes:
                 del column_dtypes[target]
-            if target and self.meta.feature_names and target in self.meta.feature_names:
-                self.meta.feature_names.remove(target)
+        if target and self.meta.feature_names and target in self.meta.feature_names:
+            self.meta.feature_names.remove(target)
 
         if self.meta.feature_names:
             if set(self.meta.feature_names) > set(df.columns):
@@ -431,8 +430,7 @@ class BaseModel(ABC):
         del constructor_params["loader_module"]
         del constructor_params["loader_class"]
 
-        model = clazz.load(local_dir, **constructor_params)
-        return model
+        return clazz.load(local_dir, **constructor_params)
 
     @classmethod
     def read_meta_from_local_dir(cls, local_dir):
@@ -470,18 +468,17 @@ class BaseModel(ABC):
         del constructor_params["loader_module"]
         del constructor_params["loader_class"]
 
-        if class_file.exists():
-            with open(class_file, "rb") as f:
-                clazz = cloudpickle.load(f)
-                clazz_kwargs = {}
-                clazz_kwargs.update(constructor_params)
-                clazz_kwargs.update(kwargs)
-                return clazz(**clazz_kwargs)
-        else:
+        if not class_file.exists():
             raise ValueError(
                 f"Cannot load model ({cls.__module__}.{cls.__name__}), "
                 f"{MODEL_CLASS_PKL} file not found and 'load' method isn't overriden"
             )
+        with open(class_file, "rb") as f:
+            clazz = cloudpickle.load(f)
+            clazz_kwargs = {}
+            clazz_kwargs.update(constructor_params)
+            clazz_kwargs.update(kwargs)
+            return clazz(**clazz_kwargs)
 
     def to_mlflow(self):
         raise NotImplementedError

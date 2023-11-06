@@ -54,5 +54,5 @@ def validate_classification_label(func):
 
 def check_slice_not_empty(sliced_dataset: Dataset, dataset_name: Optional[str] = "", test_name: Optional[str] = ""):
     if sliced_dataset.df.empty:
-        test_name = " in " + test_name
-        raise ValueError("The sliced " + dataset_name + test_name + " is empty.")
+        test_name = f" in {test_name}"
+        raise ValueError(f"The sliced {dataset_name}{test_name} is empty.")

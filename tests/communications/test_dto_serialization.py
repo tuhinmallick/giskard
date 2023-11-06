@@ -203,9 +203,7 @@ def get_all_dto_classes() -> List[Type[BaseModel]]:
 
 
 def get_fields(klass: Type[BaseModel]) -> Dict[str, ModelField]:
-    if IS_PYDANTIC_V2:
-        return klass.model_fields
-    return klass.__fields__
+    return klass.model_fields if IS_PYDANTIC_V2 else klass.__fields__
 
 
 def get_name(name: str, field: ModelField) -> str:
@@ -219,9 +217,7 @@ def get_alias(field: ModelField) -> Optional[str]:
 
 
 def is_required(field: ModelField) -> bool:
-    if IS_PYDANTIC_V2:
-        return field.is_required()
-    return field.required
+    return field.is_required() if IS_PYDANTIC_V2 else field.required
 
 
 ALL_DTOS = [pytest.param((klass), id=klass.__name__) for klass in get_all_dto_classes()]
@@ -234,8 +230,8 @@ def test_all_dtos_are_configured():
         klass = param_set.values[0]
         if not issubclass(klass, ConfiguredBaseModel):
             missing_classes.append(klass)
-    output = "\n  -".join([elt.__qualname__ for elt in missing_classes])
-    if len(missing_classes) > 0:
+    if missing_classes:
+        output = "\n  -".join([elt.__qualname__ for elt in missing_classes])
         raise ValueError(f"All dtos should use ConfiguredBaseModel as base class, one not using are :\n  -{output}")
 
 
@@ -246,8 +242,8 @@ def test_list_mandatory_all_classes():
         klass = param_set.values[0]
         if klass.__name__ not in MANDATORY_FIELDS.keys():
             missing_classes.append(klass)
-    output = "\n  -".join([elt.__qualname__ for elt in missing_classes])
-    if len(missing_classes) > 0:
+    if missing_classes:
+        output = "\n  -".join([elt.__qualname__ for elt in missing_classes])
         raise ValueError(f"All dtos should be tested here, missing ones are :\n  -{output}")
 
 
@@ -257,8 +253,8 @@ def test_list_optional_all_classes():
         klass = param_set.values[0]
         if klass.__name__ not in OPTIONAL_FIELDS.keys():
             missing_classes.append(klass)
-    output = "\n  -".join([elt.__qualname__ for elt in missing_classes])
-    if len(missing_classes) > 0:
+    if missing_classes:
+        output = "\n  -".join([elt.__qualname__ for elt in missing_classes])
         raise ValueError(f"All dtos should be tested here, missing ones are :\n  -{output}")
 
 
@@ -313,10 +309,11 @@ def print_all_mapping():
     res = {}
     for param_set in ALL_DTOS:
         dto = param_set.values[0]
-        mandatory_field_names = {
-            name: get_alias(field) for name, field in get_fields(dto).items() if get_alias(field) is not None
-        }
-        if len(mandatory_field_names) > 0:
+        if mandatory_field_names := {
+            name: get_alias(field)
+            for name, field in get_fields(dto).items()
+            if get_alias(field) is not None
+        }:
             res[dto.__name__] = mandatory_field_names
     print(res)
 

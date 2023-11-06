@@ -20,10 +20,7 @@ def _serialize_artifact(artifact, artifact_uuid: Optional[Union[str, uuid.UUID]]
 
 
 def repr_parameter(value: Any) -> str:
-    if isinstance(value, Enum):
-        return repr(value.value)
-
-    return repr(value)
+    return repr(value.value) if isinstance(value, Enum) else repr(value)
 
 
 def serialize_parameter(default_value: Any) -> PRIMITIVES:

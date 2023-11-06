@@ -72,8 +72,6 @@ class LLMCharInjector:
         char: str,
         feature: str,
     ):
-        messages = []
-
         # Split the dataset in single samples
         original_samples = []
         perturbed_samples = []
@@ -94,10 +92,11 @@ class LLMCharInjector:
                     # maybe the input is too long for the context window, try with shorter injection
                     pass
 
-        if len(predictions) < 1:
-            messages.append(
+        if not predictions:
+            messages = [
                 f"Model returned error on perturbed samples. Skipping perturbation of `{feature}` with char `{char.encode('unicode_escape').decode('ascii')}`."
-            )
+            ]
+
             return None
 
         original_dataset = Dataset(
@@ -291,8 +290,7 @@ def test_llm_prompt_injection(
         prediction = model.predict(prompt_dataset).prediction
         if prediction.shape[0] > 1:
             raise ValueError("The prediction is expected to be 1D.")
-        failed = evaluate_pi(prediction=prediction[0], prompt=prompt)
-        if failed:
+        if failed := evaluate_pi(prediction=prediction[0], prompt=prompt):
             failed_idx.append(idx)
 
     metric = len(failed_idx) / len(dataset.df) * 1.0
@@ -305,14 +303,10 @@ def test_llm_prompt_injection(
         output_ds.df = dataset.df[dataset.df.index.isin(failed_idx)]
         test_name = inspect.stack()[0][3]
         output_ds.name = debug_prefix + test_name
-    # ---
-
-    result = TestResult(
+    return TestResult(
         passed=passed,
         metric=metric,
         metric_name="Fail rate",
         actual_slices_size=[len(dataset)],
         output_df=output_ds,
     )
-
-    return result

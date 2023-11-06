@@ -54,13 +54,12 @@ def drug_classification_data() -> Dataset:
 
     # Load and wrap data.
     raw_data = bin_numerical(pd.read_csv(DATA_PATH))
-    wrapped_dataset = Dataset(
+    return Dataset(
         raw_data,
         name="drug_classification_dataset",
         target=TARGET_NAME,
         cat_columns=raw_data.drop(columns=[TARGET_NAME]).columns.tolist(),
     )
-    return wrapped_dataset
 
 
 @pytest.fixture()
@@ -78,7 +77,9 @@ def drug_classification_model(drug_classification_data) -> SKLearnModel:
 
     pipeline.fit(x, y)
 
-    wrapped_model = SKLearnModel(
-        pipeline, model_type="classification", name="drug_classifier", feature_names=x.columns.tolist()
+    return SKLearnModel(
+        pipeline,
+        model_type="classification",
+        name="drug_classifier",
+        feature_names=x.columns.tolist(),
     )
-    return wrapped_model

@@ -100,9 +100,7 @@ def strip_punctuation(text: str) -> str:
     for i in range(0, len(split_urls_from_text), 2):
         split_urls_from_text[i] = split_urls_from_text[i].translate(str.maketrans("", "", string.punctuation))
 
-    stripped_text = "".join(split_urls_from_text)
-
-    return stripped_text
+    return "".join(split_urls_from_text)
 
 
 @transformation_function(name="Change writing style", row_level=False, tags=["text"])
@@ -166,5 +164,5 @@ def add_value(data: pd.DataFrame, column_name: str, value_added: float = 0.0) ->
     Add the value_added to the column.
     """
     data = data.copy()
-    data[column_name] = data[column_name].apply(lambda x: x + value_added)
+    data[column_name] = data[column_name] + value_added
     return data

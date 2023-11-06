@@ -230,21 +230,12 @@ def _relative_delta(actual, reference):
 
 
 def _get_default_num_samples(model) -> int:
-    if model.is_text_generation:
-        return 10
-
-    return 1_000
+    return 10 if model.is_text_generation else 1_000
 
 
 def _get_default_output_sensitivity(model) -> float:
-    if model.is_text_generation:
-        return 0.15
-
-    return 0.05
+    return 0.15 if model.is_text_generation else 0.05
 
 
 def _get_default_threshold(model) -> float:
-    if model.is_text_generation:
-        return 0.10
-
-    return 0.05
+    return 0.10 if model.is_text_generation else 0.05

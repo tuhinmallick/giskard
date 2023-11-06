@@ -185,12 +185,11 @@ class PyTorchModel(MLFlowSerializableModel):
         self.model.to(self.device)
         self.model.eval()
 
-        if self.iterate_dataset:
-            predictions = self._get_predictions_from_iterable(data)
-        else:
-            predictions = self._get_predictions_from_object(data)
-
-        return predictions
+        return (
+            self._get_predictions_from_iterable(data)
+            if self.iterate_dataset
+            else self._get_predictions_from_object(data)
+        )
 
     def _convert_to_numpy(self, raw_predictions):
         if isinstance(raw_predictions, torch.Tensor):
@@ -222,17 +221,16 @@ class PyTorchModel(MLFlowSerializableModel):
     @classmethod
     def load_pytorch_meta(cls, local_dir):
         pytorch_meta_file = Path(local_dir) / "giskard-model-pytorch-meta.yaml"
-        if pytorch_meta_file.exists():
-            with open(pytorch_meta_file) as f:
-                pytorch_meta = yaml.load(f, Loader=yaml.Loader)
-                pytorch_meta["device"] = pytorch_meta.get("device")
-                pytorch_meta["torch_dtype"] = pytorch_meta.get("torch_dtype")
-                pytorch_meta["iterate_dataset"] = pytorch_meta.get("iterate_dataset")
-                return pytorch_meta
-        else:
+        if not pytorch_meta_file.exists():
             raise ValueError(
                 f"Cannot load model ({cls.__module__}.{cls.__name__}), " f"{pytorch_meta_file} file not found"
             )
+        with open(pytorch_meta_file) as f:
+            pytorch_meta = yaml.load(f, Loader=yaml.Loader)
+            pytorch_meta["device"] = pytorch_meta.get("device")
+            pytorch_meta["torch_dtype"] = pytorch_meta.get("torch_dtype")
+            pytorch_meta["iterate_dataset"] = pytorch_meta.get("iterate_dataset")
+            return pytorch_meta
 
     def to_mlflow(self, artifact_path: str = "pytorch-model-from-giskard", **kwargs):
         return mlflow.pytorch.log_model(self.model, artifact_path, **kwargs)

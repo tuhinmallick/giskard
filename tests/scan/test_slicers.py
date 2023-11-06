@@ -12,7 +12,7 @@ from giskard.slicing.tree_slicer import DecisionTreeSlicer
 def _make_demo_dataset(**kwargs):
     feature1 = np.arange(1000)
     loss = np.zeros(1000)
-    loss[0:200] = 2
+    loss[:200] = 2
     loss[500:600] = 1
     # Shuld create 4 slices:
     # - feature1 <= 199.5

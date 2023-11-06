@@ -77,7 +77,9 @@ def websocket_log_actor(ml_worker: MLWorkerInfo, req: Dict, *args, **kwargs):
     logger.info(f"ML Worker {ml_worker.id} performing {action} params: {param}")
 
 
-WEBSOCKET_ACTORS = dict((action.name, websocket_log_actor) for action in MLWorkerAction)
+WEBSOCKET_ACTORS = {
+    action.name: websocket_log_actor for action in MLWorkerAction
+}
 
 
 def wrapped_handle_result(
@@ -343,7 +345,7 @@ def on_ml_worker_stop_worker(*args, **kwargs) -> websocket.Empty:
 
 def run_classification_mode(model, dataset, prediction_results):
     results = prediction_results.all_predictions
-    labels = {k: v for k, v in enumerate(model.meta.classification_labels)}
+    labels = dict(enumerate(model.meta.classification_labels))
     label_serie = dataset.df[dataset.target] if dataset.target else None
     if len(model.meta.classification_labels) > 2 or model.meta.classification_threshold is None:
         preds_serie = prediction_results.all_predictions.idxmax(axis="columns")
@@ -520,7 +522,9 @@ def explain_text_ws(
     map_features_weight = dict(zip(classification_labels, list_weights))
     return websocket.ExplainText(
         weights={
-            str(k): websocket.WeightsPerFeature(weights=[weight for weight in map_features_weight[k]])
+            str(k): websocket.WeightsPerFeature(
+                weights=list(map_features_weight[k])
+            )
             for k in map_features_weight
         },
         words=list(list_words),
@@ -681,7 +685,10 @@ def handle_cta(
     project_key = params.model.project_key
 
     # Upload related object depending on CTA type
-    if cta_kind == CallToActionKind.CREATE_SLICE or cta_kind == CallToActionKind.CREATE_SLICE_OPEN_DEBUGGER:
+    if cta_kind in [
+        CallToActionKind.CREATE_SLICE,
+        CallToActionKind.CREATE_SLICE_OPEN_DEBUGGER,
+    ]:
         push.slicing_function.meta.tags.append("generated")
         object_uuid = push.slicing_function.upload(client, project_key)
     elif cta_kind == CallToActionKind.SAVE_PERTURBATION:
@@ -689,7 +696,10 @@ def handle_cta(
             object_uuid = perturbation.upload(client, project_key)
     elif cta_kind == CallToActionKind.SAVE_EXAMPLE:
         object_uuid = push.saved_example.upload(client, project_key)
-    elif cta_kind == CallToActionKind.CREATE_TEST or cta_kind == CallToActionKind.ADD_TEST_TO_CATALOG:
+    elif cta_kind in [
+        CallToActionKind.CREATE_TEST,
+        CallToActionKind.ADD_TEST_TO_CATALOG,
+    ]:
         object_params = {}
         for test in push.tests:
             object_uuid = test.upload(client, project_key)

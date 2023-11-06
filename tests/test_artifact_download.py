@@ -106,7 +106,6 @@ def test_download_callable_function(cf: Artifact):
             assert (tmpdir_path / CALLABLE_FUNCTION_PKL_CACHE).exists()
             assert (tmpdir_path / CALLABLE_FUNCTION_META_CACHE).exists()
 
-            requested_urls = []
             # Fixup the differences from Backend
             meta_info = fixup_mocked_artifact_meta_version(cf.meta.to_json())
             # Fixup the name to avoid load from module
@@ -115,8 +114,7 @@ def test_download_callable_function(cf: Artifact):
             })
             url = get_url_for_artifact_meta_info(cf, project_key=None)
             mr.register_uri(method=requests_mock.GET, url=url, json=meta_info)
-            requested_urls.append(url)
-
+            requested_urls = [url]
             # Register for Artifact info
             requested_urls.extend(register_uri_for_artifact_info(mr, cf, project_key=None))
 
@@ -218,7 +216,7 @@ def test_download_global_callable_function_from_cache(cf: Artifact):
 )
 def test_download_callable_function_in_project(cf: Artifact):
     project_key = str(uuid.uuid4())
-    with MockedClient(mock_all=False) as (client, mr), MockedProjectCacheDir(project_key=project_key):
+    with (MockedClient(mock_all=False) as (client, mr), MockedProjectCacheDir(project_key=project_key)):
         cf.meta.uuid = str(uuid.uuid4())    # Regenerate a UUID to ensure not loading from registry
         cache_dir = get_local_cache_callable_artifact(project_key=project_key, artifact=cf)
 
@@ -230,7 +228,6 @@ def test_download_callable_function_in_project(cf: Artifact):
             assert (tmpdir_path / CALLABLE_FUNCTION_PKL_CACHE).exists()
             assert (tmpdir_path / CALLABLE_FUNCTION_META_CACHE).exists()
 
-            requested_urls = []
             # Fixup the differences from Backend
             meta_info = fixup_mocked_artifact_meta_version(cf.meta.to_json())
             # Fixup the name to avoid load from module
@@ -239,8 +236,7 @@ def test_download_callable_function_in_project(cf: Artifact):
             })
             url = get_url_for_artifact_meta_info(cf, project_key=project_key)
             mr.register_uri(method=requests_mock.GET, url=url, json=meta_info)
-            requested_urls.append(url)
-
+            requested_urls = [url]
             # Register for Artifact info
             requested_urls.extend(register_uri_for_artifact_info(mr, cf, project_key=project_key))
 

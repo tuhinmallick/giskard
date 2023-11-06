@@ -35,8 +35,7 @@ def get_test_df():
     X_train, X_test, Y_train, Y_test = model_selection.train_test_split(
         X, Y, test_size=0.50, random_state=30, stratify=Y
     )
-    test_df = pd.concat([X_test, Y_test], axis=1)
-    return test_df
+    return pd.concat([X_test, Y_test], axis=1)
 
 
 def get_model_and_df(model: str = ModelTypes.LOGISTIC_REGRESSION, max_iter: int = 100) -> Tuple[Pipeline, pd.DataFrame]:

@@ -84,12 +84,10 @@ def _wandb_general_bar_plot(shap_explanations: Explanation, feature_names: Itera
     feature_column = "feature"
     shap_column = "global_shap_mean"
 
-    # Calculate global shap means.
-    shap_general_means = list()
-
-    for feature_name in feature_names:
-        shap_general_means.append(np.abs(shap_explanations[:, feature_name].values).mean())
-
+    shap_general_means = [
+        np.abs(shap_explanations[:, feature_name].values).mean()
+        for feature_name in feature_names
+    ]
     # Create bar plot.
     df = pd.DataFrame(data={feature_column: feature_names, shap_column: shap_general_means})
     table = wandb.Table(dataframe=df)

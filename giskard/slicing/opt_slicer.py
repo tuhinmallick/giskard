@@ -35,9 +35,7 @@ class OptSlicer(BaseSlicer):
 
         data = self.dataset.df
         optb.fit(data[feature], data[target])
-        slice_candidates = make_slices_from_splits(data, optb.splits, features)
-
-        return slice_candidates
+        return make_slices_from_splits(data, optb.splits, features)
 
 
 def make_slices_from_splits(data: pd.DataFrame, splits: List[float], feature_names: str):

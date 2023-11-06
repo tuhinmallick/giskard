@@ -57,7 +57,7 @@ def test_performance_bias_detector_with_tabular(german_credit_model, german_cred
 
     issues = detector.run(german_credit_model, german_credit_data)
     assert len(issues) > 0
-    assert all([isinstance(issue, Issue) for issue in issues])
+    assert all(isinstance(issue, Issue) for issue in issues)
 
     # Check that descriptions are coherent
     assert (
@@ -78,7 +78,7 @@ def test_performance_bias_detector_with_text_features(enron_model, enron_data):
 
     issues = detector.run(enron_model, dataset)
     assert len(issues) > 0
-    assert all([isinstance(issue, Issue) for issue in issues])
+    assert all(isinstance(issue, Issue) for issue in issues)
 
 
 def test_selects_issues_with_benjamini_hochberg(titanic_model, titanic_dataset):

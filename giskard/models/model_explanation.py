@@ -99,8 +99,9 @@ def _prepare_for_explanation(input_df: pd.DataFrame, model: BaseModel, dataset: 
 
     target = dataset.target if dataset.target in input_df.columns else None
     prepared_dataset = Dataset(input_df, column_types=dataset.column_types, target=target, validation=False)
-    prepared_df = prepared_dataset.df[_get_columns_original_order(prepared_dataset, model, dataset)]
-    return prepared_df
+    return prepared_dataset.df[
+        _get_columns_original_order(prepared_dataset, model, dataset)
+    ]
 
 
 def _calculate_dataset_shap_values(model: BaseModel, dataset: Dataset) -> np.ndarray:
@@ -293,12 +294,14 @@ def summary_shap_regression(
     feature_inds = feature_order[:max_display]
     global_shap_values = np.abs(shap_values).mean(0)
 
-    chart_data = {
+    return {
         "explanations": {
-            "default": {feature_names[feature_ind]: global_shap_values[feature_ind] for feature_ind in feature_inds}
+            "default": {
+                feature_names[feature_ind]: global_shap_values[feature_ind]
+                for feature_ind in feature_inds
+            }
         }
     }
-    return chart_data
 
 
 def text_explanation_prediction_wrapper(

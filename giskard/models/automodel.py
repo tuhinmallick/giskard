@@ -29,15 +29,14 @@ def _get_class(_lib, _class):
 def _infer_giskard_cls(model: Any):
     if inspect.isfunction(model) or inspect.ismethod(model):
         return PredictionFunctionModel
-    else:
-        for _giskard_class, _base_libs in _ml_libraries.items():
-            try:
-                giskard_cls = _get_class(*_giskard_class)
-                base_libs = [_get_class(*_base_lib) for _base_lib in _base_libs]
-                if isinstance(model, tuple(base_libs)):
-                    return giskard_cls
-            except ImportError:
-                pass
+    for _giskard_class, _base_libs in _ml_libraries.items():
+        try:
+            giskard_cls = _get_class(*_giskard_class)
+            base_libs = [_get_class(*_base_lib) for _base_lib in _base_libs]
+            if isinstance(model, tuple(base_libs)):
+                return giskard_cls
+        except ImportError:
+            pass
     return None
 
 
@@ -121,58 +120,52 @@ class Model(CloudpickleSerializableModel):
                 "\nIf a model object is provided, we use a model-tailored serialization method during its upload."
                 "\nIf a prediction function is provided, we use cloudpickle to serialize it."
             )
-        else:
-            giskard_cls = _infer_giskard_cls(model)
-            # if the Model class is overriden (thus != Model) -> get the methods from the subclass
-            # if the Model class is instantiated (thus == Model) -> get the methods from the inferred class
-            # if giskard_cls == None -> get the methods from CloudpickleSerializableModel
-            is_overriden = cls.__name__ != "Model"  # TODO: Improve this
-            if is_overriden:
-                if not giskard_cls:
-                    giskard_cls = CloudpickleSerializableModel
-                # if save_model and load_model are overriden, replace them, if not, these equalities will be identities.
-                possibly_overriden_cls = cls
-                possibly_overriden_cls.should_save_model_class = True
-            elif giskard_cls:
-                input_type = "'prediction_function'" if giskard_cls == PredictionFunctionModel else "'model'"
-                logger.info(
-                    "Your "
-                    + input_type
-                    + " is successfully wrapped by Giskard's '"
-                    + str(giskard_cls.__name__)
-                    + "' wrapper class."
-                )
-                possibly_overriden_cls = giskard_cls
-            else:  # possibly_overriden_cls = CloudpickleSerializableModel
-                raise NotImplementedError(
-                    "We could not infer your model library. You have two options:"
-                    "\n- Pass a prediction_function to the Model class "
-                    '(we will try to serialize it with "cloudpickle").'
-                    "\n- Extend the Model class and override "
-                    'the abstract "model_predict" method. Upon upload to the Giskard hub, we will try to serialise'
-                    'it with "cloudpickle", if that does not work, we will ask you to override the "save_model" and'
-                    '"load_model" with your own serialization methods.'
-                    "\nWe recommend that you follow our documentation page: "
-                    "https://giskard.readthedocs.io/en/latest/getting-started/scan"
-                )
-
-            methods = dict(possibly_overriden_cls.__dict__)
-            output_cls = type(possibly_overriden_cls.__name__, (giskard_cls,), methods)
-
-            obj = output_cls(
-                model=model,
-                model_type=SupportedModelTypes(model_type) if isinstance(model_type, str) else model_type,
-                data_preprocessing_function=data_preprocessing_function,
-                model_postprocessing_function=model_postprocessing_function,
-                name=name,
-                feature_names=list(feature_names) if feature_names is not None else None,
-                classification_threshold=classification_threshold,
-                classification_labels=classification_labels,
-                **kwargs,
+        giskard_cls = _infer_giskard_cls(model)
+        # if the Model class is overriden (thus != Model) -> get the methods from the subclass
+        # if the Model class is instantiated (thus == Model) -> get the methods from the inferred class
+        # if giskard_cls == None -> get the methods from CloudpickleSerializableModel
+        is_overriden = cls.__name__ != "Model"  # TODO: Improve this
+        if is_overriden:
+            if not giskard_cls:
+                giskard_cls = CloudpickleSerializableModel
+            # if save_model and load_model are overriden, replace them, if not, these equalities will be identities.
+            possibly_overriden_cls = cls
+            possibly_overriden_cls.should_save_model_class = True
+        elif giskard_cls:
+            input_type = "'prediction_function'" if giskard_cls == PredictionFunctionModel else "'model'"
+            logger.info(
+                f"Your {input_type} is successfully wrapped by Giskard's '{str(giskard_cls.__name__)}' wrapper class."
+            )
+            possibly_overriden_cls = giskard_cls
+        else:  # possibly_overriden_cls = CloudpickleSerializableModel
+            raise NotImplementedError(
+                "We could not infer your model library. You have two options:"
+                "\n- Pass a prediction_function to the Model class "
+                '(we will try to serialize it with "cloudpickle").'
+                "\n- Extend the Model class and override "
+                'the abstract "model_predict" method. Upon upload to the Giskard hub, we will try to serialise'
+                'it with "cloudpickle", if that does not work, we will ask you to override the "save_model" and'
+                '"load_model" with your own serialization methods.'
+                "\nWe recommend that you follow our documentation page: "
+                "https://giskard.readthedocs.io/en/latest/getting-started/scan"
             )
 
-            # Important in order for the load method to be executed consistently
-            obj.meta.loader_class = possibly_overriden_cls.__name__
-            obj.meta.loader_module = possibly_overriden_cls.__module__
+        methods = dict(possibly_overriden_cls.__dict__)
+        output_cls = type(possibly_overriden_cls.__name__, (giskard_cls,), methods)
 
-            return obj
+        obj = output_cls(
+            model=model,
+            model_type=SupportedModelTypes(model_type) if isinstance(model_type, str) else model_type,
+            data_preprocessing_function=data_preprocessing_function,
+            model_postprocessing_function=model_postprocessing_function,
+            name=name,
+            feature_names=list(feature_names) if feature_names is not None else None,
+            classification_threshold=classification_threshold,
+            classification_labels=classification_labels,
+            **kwargs,
+        )
+
+        obj.meta.loader_module = possibly_overriden_cls.__module__
+
+        obj.meta.loader_class = possibly_overriden_cls.__name__
+        return obj

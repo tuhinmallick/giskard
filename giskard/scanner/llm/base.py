@@ -23,12 +23,10 @@ class RequirementBasedDetector(Detector):
         model_meta_tokens = counts["model_meta_tokens"]
         input_sample_tokens = counts["input_sample_tokens"]
 
-        num_calls = 0
         num_prompt_tokens = 0
         num_sampled_tokens = 0
 
-        # Requirement generation: base prompt + model meta
-        num_calls += 1
+        num_calls = 0 + 1
         num_prompt_tokens += 320 + model_meta_tokens  # base prompt is roughly 320 tokens long
         num_sampled_tokens += 30 * self.num_requirements  # generated requirements are typically 30 tokens long
 
@@ -87,7 +85,7 @@ class RequirementBasedDetector(Detector):
             dataset,
             group=self._issue_group,
             level=self._issue_level,
-            description="The model does not satisfy the following requirement: " + requirement,
+            description=f"The model does not satisfy the following requirement: {requirement}",
             examples=examples,
             meta={
                 "domain": requirement,

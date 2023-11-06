@@ -34,12 +34,10 @@ class LLMImplausibleOutputDetector(Detector):
         model_meta_tokens = counts["model_meta_tokens"]
         input_sample_tokens = counts["input_sample_tokens"]
 
-        num_calls = 0
         num_prompt_tokens = 0
         num_sampled_tokens = 0
 
-        # Data generation
-        num_calls += 1
+        num_calls = 0 + 1
         num_prompt_tokens += 340 + model_meta_tokens
         num_sampled_tokens += input_sample_tokens * self.num_samples
 

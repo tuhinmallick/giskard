@@ -137,8 +137,7 @@ def _start_command(is_server, url: AnyHttpUrl, api_key, is_daemon, hf_token=None
     from giskard.ml_worker.ml_worker import MLWorker
 
     os.environ["TQDM_DISABLE"] = "1"
-    start_msg = "Starting ML Worker"
-    start_msg += " server" if is_server else " client"
+    start_msg = "Starting ML Worker" + (" server" if is_server else " client")
     if is_daemon:
         start_msg += " daemon"
     logger.info(start_msg)
@@ -228,8 +227,7 @@ def restart_command(is_server, url, api_key, hf_token):
 def _stop_pid_fname(pid_fname):
     pid_file_path = str(run_dir / pid_fname)
     remove_stale_pid_file(PIDLockFile(pid_file_path))
-    pid = read_pid_from_pidfile(pid_file_path)
-    if pid:
+    if pid := read_pid_from_pidfile(pid_file_path):
         worker_process = psutil.Process(pid)
         worker_process.terminate()
         logger.info(f"Stopped ML Worker Daemon by PID: {pid}")

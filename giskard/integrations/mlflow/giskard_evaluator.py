@@ -25,31 +25,29 @@ class GiskardEvaluator(ModelEvaluator):
     def _wrap_dataset(self, dataset):
         if not isinstance(dataset.features_data, pd.DataFrame):
             raise ValueError("Only pd.DataFrame are currently supported by the giskard evaluator.")
-        else:
-            try:
-                giskard_dataset = setup_dataset(dataset, self.evaluator_config)
+        try:
+            giskard_dataset = setup_dataset(dataset, self.evaluator_config)
 
-                # log dataset
-                local_path = giskard_dataset.to_mlflow(mlflow_client=self.client, mlflow_run_id=self.run_id)
-                return giskard_dataset, local_path
-            except Exception as e:
-                analytics.track(
-                    "mlflow_integration:wrapping_dataset:error",
-                    {
-                        "mlflow_run_id": self.run_id,
-                        "error": str(e),
-                    },
-                )
-                raise ValueError(
-                    "An error occurred while wrapping the dataset. "
-                    "Please submit the traceback as a GitHub issue in the following "
-                    "repository for further assistance: https://github.com/Giskard-AI/giskard."
-                ) from e
+            # log dataset
+            local_path = giskard_dataset.to_mlflow(mlflow_client=self.client, mlflow_run_id=self.run_id)
+            return giskard_dataset, local_path
+        except Exception as e:
+            analytics.track(
+                "mlflow_integration:wrapping_dataset:error",
+                {
+                    "mlflow_run_id": self.run_id,
+                    "error": str(e),
+                },
+            )
+            raise ValueError(
+                "An error occurred while wrapping the dataset. "
+                "Please submit the traceback as a GitHub issue in the following "
+                "repository for further assistance: https://github.com/Giskard-AI/giskard."
+            ) from e
 
     def _wrap_model(self, model, model_type, feature_names):
         try:
-            giskard_model = setup_model(model, model_type, feature_names, self.evaluator_config)
-            return giskard_model
+            return setup_model(model, model_type, feature_names, self.evaluator_config)
         except Exception as e:
             analytics.track(
                 "mlflow_integration:wrapping_model:error",

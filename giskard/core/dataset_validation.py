@@ -14,12 +14,11 @@ def validate_target(ds: Dataset):
             "You did not provide the optional argument 'target'. "
             "'target' is the column name in df corresponding to the actual target variable (ground truth)."
         )
-    else:
-        if ds.target not in ds.columns:
-            raise ValueError(
-                "Invalid target parameter:"
-                f" '{ds.target}' column is not present in the dataset with columns: {list(ds.columns)}"
-            )
+    elif ds.target not in ds.columns:
+        raise ValueError(
+            "Invalid target parameter:"
+            f" '{ds.target}' column is not present in the dataset with columns: {list(ds.columns)}"
+        )
 
 
 def validate_dtypes(ds: Dataset):
@@ -40,12 +39,11 @@ def _check_hashability(df):
     TypeError: If any column containing object types in the input DataFrame is not hashable.
     """
     df_objects = df.select_dtypes(include="object")
-    non_hashable_cols = []
-    for col in df_objects.columns:
-        if not isinstance(df[col].iat[0], Hashable):
-            non_hashable_cols.append(col)
-
-    if non_hashable_cols:
+    if non_hashable_cols := [
+        col
+        for col in df_objects.columns
+        if not isinstance(df[col].iat[0], Hashable)
+    ]:
         raise TypeError(
             f"The following columns in your df: {non_hashable_cols} are not hashable. "
             f"We currently support only hashable column types such as int, bool, str, tuple and not list or dict."
@@ -68,15 +66,16 @@ def validate_column_types(ds: Dataset):
     Verifies that declared column_types are correct with regard to SupportedColumnTypes
     :param ds: Dataset to be validated
     """
-    if ds.column_types and isinstance(ds.column_types, dict):
-        if not set(ds.column_types.values()).issubset(set(column_type.value for column_type in SupportedColumnTypes)):
-            raise ValueError(
-                f"Invalid column_types parameter: {ds.column_types}"
-                + f"Please choose types among {[column_type.value for column_type in SupportedColumnTypes]}."
-            )
-    else:
+    if not ds.column_types or not isinstance(ds.column_types, dict):
         raise ValueError(f"Invalid column_types parameter: {ds.column_types}. Please specify non-empty dictionary.")
 
+    if not set(ds.column_types.values()).issubset(
+        {column_type.value for column_type in SupportedColumnTypes}
+    ):
+        raise ValueError(
+            f"Invalid column_types parameter: {ds.column_types}"
+            + f"Please choose types among {[column_type.value for column_type in SupportedColumnTypes]}."
+        )
     df_columns_set = set(ds.columns)
     df_columns_set.discard(ds.target)
     column_types_set = set(ds.column_types.keys())
@@ -115,40 +114,31 @@ def validate_column_categorization(ds: Dataset):
         if column == ds.target:
             continue
         # if a user provided possibly wrong information in column_types or cat_columns about cat columns
-        if nuniques[column] <= ds.category_threshold and (
-            ds.column_types[column] == SupportedColumnTypes.NUMERIC.value
-            or ds.column_types[column] == SupportedColumnTypes.TEXT.value
-        ):
+        if nuniques[column] <= ds.category_threshold and ds.column_types[
+            column
+        ] in [
+            SupportedColumnTypes.NUMERIC.value,
+            SupportedColumnTypes.TEXT.value,
+        ]:
             warning(
                 f"Feature '{column}' is declared as '{ds.column_types[column]}' but has {nuniques[column]} "
                 f"(<= category_threshold={ds.category_threshold}) distinct values. Are "
                 "you sure it is not a 'category' feature?"
             )
-        # TODO: A bit noisy with a conservative category_threshold, decide on whether to include it or not.
-        # if a user provided possibly wrong information in column_types or cat_columns about cat columns
-        # elif nuniques[column] > ds.category_threshold and \
-        #         ds.column_types[column] == SupportedColumnTypes.CATEGORY.value:
-        #     warning(
-        #         f"Feature '{column}' is declared as '{ds.column_types[column]}' but has {nuniques[column]} "
-        #         f"(> category_threshold={ds.category_threshold}) distinct values. Are "
-        #         f"you sure it is a 'category' feature?"
-        #     )
-        # if a user provided possibly wrong information in column_types about text columns
-        else:
-            if ds.column_types[column] == SupportedColumnTypes.TEXT.value:
-                try:
-                    pd.to_numeric(ds.df[column])
-                    warning(
-                        f"Feature '{column}' is declared as '{ds.column_types[column]}'. Are "
-                        "you sure it is not a 'numeric' feature?"
-                    )
-                except ValueError:
-                    pass
-            elif ds.column_types[column] == SupportedColumnTypes.NUMERIC.value:
-                try:
-                    pd.to_numeric(ds.df[column])
-                except ValueError:
-                    warning(
-                        f"Feature '{column}' is declared as '{ds.column_types[column]}'. Are "
-                        "you sure it is not a 'text' feature?"
-                    )
+        elif ds.column_types[column] == SupportedColumnTypes.TEXT.value:
+            try:
+                pd.to_numeric(ds.df[column])
+                warning(
+                    f"Feature '{column}' is declared as '{ds.column_types[column]}'. Are "
+                    "you sure it is not a 'numeric' feature?"
+                )
+            except ValueError:
+                pass
+        elif ds.column_types[column] == SupportedColumnTypes.NUMERIC.value:
+            try:
+                pd.to_numeric(ds.df[column])
+            except ValueError:
+                warning(
+                    f"Feature '{column}' is declared as '{ds.column_types[column]}'. Are "
+                    "you sure it is not a 'text' feature?"
+                )

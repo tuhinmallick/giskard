@@ -104,9 +104,9 @@ def _apply_perturbation(
         TransformationInfo if perturbation changed prediction, else None.
         Includes details like perturbed values, functions.
     """
-    transformation_function = list()
-    value_perturbed = list()
-    transformation_functions_params = list()
+    transformation_function = []
+    value_perturbed = []
+    transformation_functions_params = []
 
     passed = False
     # Create a slice of the dataset with only the row to perturb
@@ -236,10 +236,9 @@ def _numeric(
                 # Transform the slice
                 transformed = ds_slice_copy.transform(t)
 
-                # Generate the perturbation
-                perturbed = _check_after_perturbation(model, ds_slice, transformed)
-
-                if perturbed:
+                if perturbed := _check_after_perturbation(
+                    model, ds_slice, transformed
+                ):
                     value_perturbed.append(transformed.df[feature].values.item(0))
                     transformation_function.append(t)
                     transformation_functions_params.append(dict(column_name=feature, value_added=float(value)))
@@ -271,15 +270,10 @@ def _check_after_perturbation(model: BaseModel, ref_row: Dataset, row_perturbed:
         ref_pred = model.predict(ref_row).prediction[0]
         # Compute the probability of the perturbed row
         pred = model.predict(row_perturbed).prediction[0]
-        # Check if the probability of the reference row is different from the probability of the perturbed row
-        passed = ref_pred != pred
-        return passed
-
+        return ref_pred != pred
     elif model.meta.model_type == SupportedModelTypes.REGRESSION:
         # Compute the prediction of the reference row
         ref_val = model.predict(ref_row).prediction[0]
         # Compute the prediction of the perturbed row
         new_val = model.predict(row_perturbed).prediction[0]
-        # Check if the prediction of the reference row is different from the prediction of the perturbed row
-        passed = (new_val - ref_val) / ref_val >= 0.2
-        return passed
+        return (new_val - ref_val) / ref_val >= 0.2
