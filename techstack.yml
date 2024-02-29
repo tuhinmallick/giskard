@@ -1,0 +1,600 @@
+repo_name: tuhinmallick/giskard
+report_id: 6bd5696bb95c18cf07ff6efda5b59459
+version: 0.1
+repo_type: Public
+timestamp: '2024-02-29T20:07:30+00:00'
+requested_by: rabah-khalek
+provider: github
+branch: main
+detected_tools_count: 43
+tools:
+- name: CSS 3
+  description: The latest evolution of the Cascading Style Sheets language
+  website_url: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS3
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/6727/css.png
+  detection_source_url: https://github.com/tuhinmallick/giskard
+  detection_source: Repo Metadata
+- name: JavaScript
+  description: Lightweight, interpreted, object-oriented language with first-class
+    functions
+  website_url: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1209/javascript.jpeg
+  detection_source_url: https://github.com/tuhinmallick/giskard
+  detection_source: Repo Metadata
+- name: Python
+  description: A clear and powerful object-oriented programming language, comparable
+    to Perl, Ruby, Scheme, or Java.
+  website_url: https://www.python.org
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/993/pUBY5pVj.png
+  detection_source_url: https://github.com/tuhinmallick/giskard
+  detection_source: Repo Metadata
+- name: AlpineJS
+  description: A lightweight JavaScript framework for building interactive web interfaces
+  website_url: https://alpinejs.dev/
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Javascript UI Libraries
+  image_url: https://img.stackshare.io/service/101749/default_1affeb0b941376ae07126433311c338b5cd86701.jpg
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: Autoprefixer
+  description: PostCSS plugin to parse CSS and add vendor prefixes to CSS rules
+  website_url: https://github.com/postcss/autoprefixer
+  open_source: false
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: CSS Pre-processors / Extensions
+  image_url: https://img.stackshare.io/service/2202/72d087642cfce6fef6f2dabec5bf49e8_400x400.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: PostCSS
+  description: Transform CSS with JS plugins
+  website_url: https://github.com/postcss/postcss
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: CSS Pre-processors / Extensions
+  image_url: https://img.stackshare.io/service/3339/rlFcjEdI.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: Tailwind CSS
+  description: A utility-first CSS framework for rapid UI development
+  website_url: https://tailwindcss.com
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Front-End Frameworks
+  image_url: https://img.stackshare.io/service/8158/default_660b7c41c3ba489cb581eec89c04655404258c19.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: Babel
+  description: Use next generation JavaScript, today.
+  website_url: http://babeljs.io/
+  version: 7.21.8
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: JavaScript Compilers
+  image_url: https://img.stackshare.io/service/2739/-1wfGjNw.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/tuhinmallick/giskard
+  detection_source: Repo Metadata
+- name: GitHub Actions
+  description: Automate your workflow from idea to production
+  website_url: https://github.com/features/actions
+  open_source: false
+  hosted_saas: true
+  category: Build, Test, Deploy
+  sub_category: Continuous Integration
+  image_url: https://img.stackshare.io/service/11563/actions.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/.github/workflows/build-python.yml
+  detection_source: ".github/workflows/build-python.yml"
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-27 14:53:49.000000000 Z
+- name: PyPI
+  description: A repository of software for the Python programming language
+  website_url: https://pypi.org/
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Hosted Package Repository
+  image_url: https://img.stackshare.io/service/12572/-RIWgodF_400x400.jpg
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Andrey Avtomonov
+  last_updated_on: 2022-11-28 00:31:40.000000000 Z
+- name: gulp
+  description: The streaming build system
+  website_url: http://gulpjs.com/
+  version: 4.0.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: JS Build Tools / JS Task Runners
+  image_url: https://img.stackshare.io/service/844/iruTC031.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: npm
+  description: The package manager for JavaScript.
+  website_url: https://www.npmjs.com/
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Front End Package Manager
+  image_url: https://img.stackshare.io/service/1120/lejvzrnlpb308aftn31u.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: Shell
+  description: A shell is a text-based terminal, used for manipulating programs and
+    files. Shell scripts typically manage program execution.
+  website_url: https://en.wikipedia.org/wiki/Shell_script
+  open_source: false
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/4631/default_c2062d40130562bdc836c13dbca02d318205a962.png
+  detection_source_url: https://github.com/tuhinmallick/giskard
+  detection_source: Repo Metadata
+- name: cssnano
+  description: A modular minifier, based on the PostCSS ecosystem. Created by @ben_eb.
+  website_url: http://cssnano.co/
+  open_source: false
+  hosted_saas: false
+  image_url: https://img.stackshare.io/service/6612/ehMiE-wz_normal.jpg
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: chardet
+  description: Universal encoding detector for Python 2 and 3
+  package_url: https://pypi.org/project/chardet
+  license: LGPL-2.1
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19856/default_4a8a8fdc10130068bf295812b98e9b72fb42fe70.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-26 09:12:01.000000000 Z
+- name: cloudpickle
+  description: Extended pickling support for Python objects
+  package_url: https://pypi.org/project/cloudpickle
+  version: 1.1.1
+  license: BSD-1-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20066/default_bb49fb0188726b8922387d8bb6e9b2cd0c3c0ea9.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Kevin Messiaen
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: colorama
+  description: Cross-platform colored terminal text
+  package_url: https://pypi.org/project/colorama
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19845/default_accee5d2b8ed75c2245f13504daf75b1cbc8cc9f.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-26 09:12:01.000000000 Z
+- name: langdetect
+  description: Language detection library ported from Google's language-detection
+  package_url: https://pypi.org/project/langdetect
+  version: 1.0.9
+  license: Other
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/pypi/image.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-25 14:20:54.000000000 Z
+- name: mixpanel
+  description: Official Mixpanel library for Python
+  package_url: https://pypi.org/project/mixpanel
+  version: 4.4.0
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/pypi/image.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Kevin Messiaen
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: numpy
+  description: NumPy is the fundamental package for array computing with Python
+  package_url: https://pypi.org/project/numpy
+  version: 1.22.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19828/default_d7c684bf2673f008a9f02ac93901229297a22d7e.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Hartorn
+  last_updated_on: 2023-09-28 12:50:58.000000000 Z
+- name: packaging
+  description: Core utilities for Python packages
+  package_url: https://pypi.org/project/packaging
+  license: BSD-3-Clause,Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19894/default_f716e4bc541a9eb6e3f5b7a20d7c35355075b0b4.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-26 09:12:01.000000000 Z
+- name: pandas
+  description: Powerful data structures for data analysis
+  package_url: https://pypi.org/project/pandas
+  version: 1.3.4
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19837/default_85689b353a3a9409328e253ea28d859d29151e0c.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-23 09:26:52.000000000 Z
+- name: protobuf
+  description: Protocol Buffers
+  package_url: https://pypi.org/project/protobuf
+  version: '3.21'
+  license: BSD-1-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19862/default_f24e00e4cb7620e436f9d06e0305070e1335922a.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-26 09:12:01.000000000 Z
+- name: pydantic
+  description: Data validation and settings management using python 3.6 type hinting
+  package_url: https://pypi.org/project/pydantic
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20022/default_b0d1a54f127d7017fce41c15f5e85568fb7019ed.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-24 15:14:31.000000000 Z
+- name: requests
+  description: Python HTTP for Humans
+  package_url: https://pypi.org/project/requests
+  version: '2.19'
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19826/default_d7c684bf2673f008a9f02ac93901229297a22d7e.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Andrey Avtomonov
+  last_updated_on: 2023-10-25 15:02:15.000000000 Z
+  vulnerabilities:
+  - name: Insufficiently Protected Credentials in Requests
+    cve_id: CVE-2018-18074
+    cve_url: https://github.com/advisories/GHSA-x84v-xcm2-53pg
+    detected_date: Aug 22
+    severity: high
+    first_patched: 2.20.0
+  - name: Unintended leak of Proxy-Authorization header in requests
+    cve_id: CVE-2023-32681
+    cve_url: https://github.com/advisories/GHSA-j8r2-6x86-q33q
+    detected_date: May 23
+    severity: moderate
+    first_patched: 2.31.0
+- name: requests-toolbelt
+  description: A utility belt for advanced users of python-requests
+  package_url: https://pypi.org/project/requests-toolbelt
+  version: 0.9.1
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20128/default_3146a05cf4dd77d8b50cff25709373c081ac5053.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-26 09:12:01.000000000 Z
+- name: scikit-learn
+  description: A set of python modules for machine learning and data mining
+  package_url: https://pypi.org/project/scikit-learn
+  version: '1.0'
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19898/default_4343f8bba4f6051641ffca8b4fbe9b099402c84d.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-10-16 15:51:02.000000000 Z
+  vulnerabilities:
+  - name: scikit-learn Denial of Service
+    cve_id: CVE-2020-28975
+    cve_url: https://github.com/advisories/GHSA-jxfp-4rvq-9h9m
+    detected_date: Feb 3
+    severity: high
+    first_patched: 1.0.1
+- name: scipy
+  description: 'SciPy: Scientific Library for Python'
+  package_url: https://pypi.org/project/scipy
+  version: 1.7.3
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19848/default_db2ab2702f70e20c272f6ce65251108fb2b8f1ea.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Kevin Messiaen
+  last_updated_on: 2023-06-22 05:44:54.000000000 Z
+  vulnerabilities:
+  - name: scipy memory leak vulnerability
+    cve_id: CVE-2023-25399
+    cve_url: https://github.com/advisories/GHSA-9jx5-6pgf-crrp
+    detected_date: Jul 7
+    severity: moderate
+    first_patched: 1.10.0
+- name: setuptools
+  description: Easily download
+  package_url: https://pypi.org/project/setuptools
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19831/default_65d1c12a133e1aa67ae96a1221c9c122ddf86c5f.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-26 09:12:01.000000000 Z
+- name: websocket-client
+  description: WebSocket client for Python. hybi13 is supported
+  package_url: https://pypi.org/project/websocket-client
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/19910/default_67f813d4aac73d024261bcfded6ef2b918e384a0.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-26 09:12:01.000000000 Z
+- name: xxhash
+  description: Python binding for xxHash
+  package_url: https://pypi.org/project/xxhash
+  version: 3.2.0
+  license: BSD-2-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/20358/default_a54cbb457d7aac7ab53484c3473848dbdd84d806.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Alex Combessie
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: zstandard
+  description: Zstandard bindings for Python
+  package_url: https://pypi.org/project/zstandard
+  version: 0.10.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: PyPI Packages
+  image_url: https://img.stackshare.io/package/pypi/image.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/pyproject.toml
+  detection_source: pyproject.toml
+  last_updated_by: Bazire
+  last_updated_on: 2023-10-23 09:26:52.000000000 Z
+- name: "@babel/core"
+  description: Babel compiler core
+  package_url: https://www.npmjs.com/@babel/core
+  version: 7.21.8
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15810/default_004658cda9b38934f2871435e9dc15608c86e8be.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: "@babel/preset-env"
+  description: A Babel preset for each environment
+  package_url: https://www.npmjs.com/@babel/preset-env
+  version: 7.21.5
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15819/default_98aa227f51aa9d787815ec3fd98d0ab2bfebbb91.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: cssnano
+  description: A modular minifier, built on top of the PostCSS ecosystem
+  package_url: https://www.npmjs.com/cssnano
+  version: 6.0.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16102/default_efe4f0184d007a28e793d89a59e058b742bc9177.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: gulp-babel
+  description: Use next generation JavaScript, today
+  package_url: https://www.npmjs.com/gulp-babel
+  version: 8.0.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15963/default_ac622bc364a601d766b9a6f6039f191492f54d65.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: gulp-concat
+  description: Concatenates files
+  package_url: https://www.npmjs.com/gulp-concat
+  version: 2.6.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15973/default_732016a20524708efe7a4c77497fe9bfeea19ba6.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: gulp-minify
+  description: Js minify plugin for gulp
+  package_url: https://www.npmjs.com/gulp-minify
+  version: 3.1.0
+  license: BSD-2-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17403/default_c11ea7d401c11f11d89301d0302509ab7d72e5ac.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: gulp-postcss
+  description: PostCSS gulp plugin
+  package_url: https://www.npmjs.com/gulp-postcss
+  version: 9.0.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16282/default_5dfc1810d0882ab844578a326bb8bf19e45e7227.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: postcss-import
+  description: PostCSS plugin to import CSS files
+  package_url: https://www.npmjs.com/postcss-import
+  version: 15.1.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16086/default_d4e765f8a43dcfd232c8b9ee9732058bc27c727a.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: tailwindcss
+  description: A utility-first CSS framework for rapidly building custom user interfaces
+  package_url: https://www.npmjs.com/tailwindcss
+  version: 3.3.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17398/default_2cd7ed1c123f2fca074a6f4b16c4e73d5bfe82be.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
+- name: uglify
+  description: A simple tool to uglify javascript &amp; css files
+  package_url: https://www.npmjs.com/uglify
+  version: 0.1.5
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/18097/image.png
+  detection_source_url: https://github.com/tuhinmallick/giskard/blob/main/package-lock.json
+  detection_source: package.json
+  last_updated_by: Matteo Dora
+  last_updated_on: 2023-06-01 00:11:23.000000000 Z
